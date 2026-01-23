@@ -21,7 +21,6 @@ void MR24HPC1Component::dump_config() {
   LOG_TEXT_SENSOR(" ", "Firware Verison Text Sensor", this->firware_version_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Keep Away Text Sensor", this->keep_away_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Motion Status Text Sensor", this->motion_status_text_sensor_);
-  LOG_TEXT_SENSOR(" ", "Custom Mode End Text Sensor", this->custom_mode_end_text_sensor_);
 #endif
 #ifdef USE_BINARY_SENSOR
   LOG_BINARY_SENSOR(" ", "Has Target Binary Sensor", this->has_target_binary_sensor_);
@@ -33,14 +32,12 @@ void MR24HPC1Component::dump_config() {
   LOG_SENSOR(" ", "Custom Spatial Static Sensor", this->custom_spatial_static_value_sensor_);
   LOG_SENSOR(" ", "Custom Spatial Motion Sensor", this->custom_spatial_motion_value_sensor_);
   LOG_SENSOR(" ", "Custom Motion Speed Sensor", this->custom_motion_speed_sensor_);
-  LOG_SENSOR(" ", "Custom Mode Num Sensor", this->custom_mode_num_sensor_);
 #endif
 #ifdef USE_SWITCH
   LOG_SWITCH(" ", "Underly Open Function Switch", this->underlying_open_function_switch_);
 #endif
 #ifdef USE_BUTTON
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
-  LOG_BUTTON(" ", "Custom Set End Button", this->custom_set_end_button_);
 #endif
 #ifdef USE_SELECT
   LOG_SELECT(" ", "Scene Mode Select", this->scene_mode_select_);
@@ -50,7 +47,6 @@ void MR24HPC1Component::dump_config() {
 #endif
 #ifdef USE_NUMBER
   LOG_NUMBER(" ", "Sensitivity Number", this->sensitivity_number_);
-  LOG_NUMBER(" ", "Custom Mode Number", this->custom_mode_number_);
   LOG_NUMBER(" ", "Existence Threshold Number", this->existence_threshold_number_);
   LOG_NUMBER(" ", "Motion Threshold Number", this->motion_threshold_number_);
   LOG_NUMBER(" ", "Motion Trigger Time Number", this->motion_trigger_number_);
@@ -64,16 +60,6 @@ void MR24HPC1Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MR24HPC1...");
   this->check_uart_settings(115200);
 
-  if (this->custom_mode_number_ != nullptr) {
-    this->custom_mode_number_->publish_state(0);  // Zero out the custom mode
-  }
-  if (this->custom_mode_num_sensor_ != nullptr) {
-    this->custom_mode_num_sensor_->publish_state(0);
-  }
-  if (this->custom_mode_end_text_sensor_ != nullptr) {
-    this->custom_mode_end_text_sensor_->publish_state("Not in custom mode");
-  }
-  this->set_custom_end_mode();
   this->poll_time_base_func_check_ = true;
   this->check_dev_inf_sign_ = true;
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
@@ -170,10 +156,6 @@ void MR24HPC1Component::loop() {
         break;
       case STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS:  // The above is the basic functional information
         this->get_keep_away();
-        this->sg_start_query_data_++;
-        break;
-      case STANDARD_QUERY_CUSTOM_MODE:
-        this->get_custom_mode();
         this->sg_start_query_data_++;
         break;
       case STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE:
@@ -526,15 +508,6 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
     this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x09) {
     // 1-4
-    if (this->custom_mode_num_sensor_ != nullptr) {
-      this->custom_mode_num_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-    }
-    if (this->custom_mode_number_ != nullptr) {
-      this->custom_mode_number_->publish_state(0);
-    }
-    if (this->custom_mode_end_text_sensor_ != nullptr) {
-      this->custom_mode_end_text_sensor_->publish_state("Setup in progress...");
-    }
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x81) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x87) {
@@ -542,24 +515,6 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
       this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
     } else {
       ESP_LOGD(TAG, "Select has index offset %d Error", data[FRAME_DATA_INDEX]);
-    }
-  } else if ((this->custom_mode_end_text_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x0A)) {
-    this->custom_mode_end_text_sensor_->publish_state("Set Success!");
-  } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x89) {
-    if (data[FRAME_DATA_INDEX] == 0) {
-      if (this->custom_mode_end_text_sensor_ != nullptr) {
-        this->custom_mode_end_text_sensor_->publish_state("Not in custom mode");
-      }
-      if (this->custom_mode_number_ != nullptr) {
-        this->custom_mode_number_->publish_state(0);
-      }
-      if (this->custom_mode_num_sensor_ != nullptr) {
-        this->custom_mode_num_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-      }
-    } else {
-      if (this->custom_mode_num_sensor_ != nullptr) {
-        this->custom_mode_num_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-      }
     }
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
@@ -639,8 +594,6 @@ void MR24HPC1Component::get_scene_mode() { this->send_query_(GET_SCENE_MODE, siz
 void MR24HPC1Component::get_sensitivity() { this->send_query_(GET_SENSITIVITY, sizeof(GET_SENSITIVITY)); }
 
 void MR24HPC1Component::get_unmanned_time() { this->send_query_(GET_UNMANNED_TIME, sizeof(GET_UNMANNED_TIME)); }
-
-void MR24HPC1Component::get_custom_mode() { this->send_query_(GET_CUSTOM_MODE, sizeof(GET_CUSTOM_MODE)); }
 
 void MR24HPC1Component::get_existence_boundary() {
   this->send_query_(GET_EXISTENCE_BOUNDARY, sizeof(GET_EXISTENCE_BOUNDARY));
@@ -724,12 +677,6 @@ void MR24HPC1Component::set_scene_mode(uint8_t value) {
   uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x07, 0x00, 0x01, value, 0x00, 0x54, 0x43};
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
   this->send_query_(send_data, send_data_len);
-  if (this->custom_mode_number_ != nullptr) {
-    this->custom_mode_number_->publish_state(0);
-  }
-  if (this->custom_mode_num_sensor_ != nullptr) {
-    this->custom_mode_num_sensor_->publish_state(0);
-  }
   this->get_scene_mode();
   this->get_sensitivity();
   this->get_custom_mode();
@@ -766,52 +713,7 @@ void MR24HPC1Component::set_unman_time(uint8_t value) {
   this->get_unmanned_time();
 }
 
-void MR24HPC1Component::set_custom_mode(uint8_t mode) {
-  if (mode == 0) {
-    this->set_custom_end_mode();  // Equivalent to end setting
-    if (this->custom_mode_number_ != nullptr) {
-      this->custom_mode_number_->publish_state(0);
-    }
-    return;
-  }
-  uint8_t send_data_len = 10;
-  uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x09, 0x00, 0x01, mode, 0x00, 0x54, 0x43};
-  send_data[7] = get_frame_crc_sum(send_data, send_data_len);
-  this->send_query_(send_data, send_data_len);
-  this->get_existence_boundary();
-  this->get_motion_boundary();
-  this->get_existence_threshold();
-  this->get_motion_threshold();
-  this->get_motion_trigger_time();
-  this->get_motion_to_rest_time();
-  this->get_custom_unman_time();
-  this->get_custom_mode();
-  this->get_scene_mode();
-  this->get_sensitivity();
-}
-
-void MR24HPC1Component::set_custom_end_mode() {
-  uint8_t send_data_len = 10;
-  uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x0a, 0x00, 0x01, 0x0F, 0xCB, 0x54, 0x43};
-  this->send_query_(send_data, send_data_len);
-  if (this->custom_mode_number_ != nullptr) {
-    this->custom_mode_number_->publish_state(0);  // Clear setpoints
-  }
-  this->get_existence_boundary();
-  this->get_motion_boundary();
-  this->get_existence_threshold();
-  this->get_motion_threshold();
-  this->get_motion_trigger_time();
-  this->get_motion_to_rest_time();
-  this->get_custom_unman_time();
-  this->get_custom_mode();
-  this->get_scene_mode();
-  this->get_sensitivity();
-}
-
 void MR24HPC1Component::set_existence_boundary(uint8_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x0A, 0x00, 0x01, (uint8_t) (value + 1), 0x00, 0x54, 0x43};
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
@@ -820,8 +722,6 @@ void MR24HPC1Component::set_existence_boundary(uint8_t value) {
 }
 
 void MR24HPC1Component::set_motion_boundary(uint8_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x0B, 0x00, 0x01, (uint8_t) (value + 1), 0x00, 0x54, 0x43};
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
@@ -830,8 +730,6 @@ void MR24HPC1Component::set_motion_boundary(uint8_t value) {
 }
 
 void MR24HPC1Component::set_existence_threshold(uint8_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x08, 0x00, 0x01, value, 0x00, 0x54, 0x43};
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
@@ -840,8 +738,6 @@ void MR24HPC1Component::set_existence_threshold(uint8_t value) {
 }
 
 void MR24HPC1Component::set_motion_threshold(uint8_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x09, 0x00, 0x01, value, 0x00, 0x54, 0x43};
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
@@ -850,8 +746,6 @@ void MR24HPC1Component::set_motion_threshold(uint8_t value) {
 }
 
 void MR24HPC1Component::set_motion_trigger_time(uint8_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t send_data_len = 13;
   uint8_t send_data[13] = {0x53, 0x59, 0x08, 0x0C, 0x00, 0x04, 0x00, 0x00, 0x00, value, 0x00, 0x54, 0x43};
   send_data[10] = get_frame_crc_sum(send_data, send_data_len);
@@ -860,8 +754,6 @@ void MR24HPC1Component::set_motion_trigger_time(uint8_t value) {
 }
 
 void MR24HPC1Component::set_motion_to_rest_time(uint16_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint8_t h8_num = (value >> 8) & 0xff;
   uint8_t l8_num = value & 0xff;
   uint8_t send_data_len = 13;
@@ -872,8 +764,6 @@ void MR24HPC1Component::set_motion_to_rest_time(uint16_t value) {
 }
 
 void MR24HPC1Component::set_custom_unman_time(uint16_t value) {
-  if ((this->custom_mode_num_sensor_ != nullptr) && (this->custom_mode_num_sensor_->state == 0))
-    return;  // You'll have to check that you're in custom mode to set it up
   uint32_t value_ms = value * 1000;
   uint8_t h24_num = (value_ms >> 24) & 0xff;
   uint8_t h16_num = (value_ms >> 16) & 0xff;

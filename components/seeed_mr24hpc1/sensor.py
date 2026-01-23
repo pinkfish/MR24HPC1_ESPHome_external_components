@@ -15,7 +15,6 @@ CONF_CUSTOM_MOTION_DISTANCE = "custom_motion_distance"
 CONF_CUSTOM_SPATIAL_STATIC_VALUE = "custom_spatial_static_value"
 CONF_CUSTOM_SPATIAL_MOTION_VALUE = "custom_spatial_motion_value"
 CONF_CUSTOM_MOTION_SPEED = "custom_motion_speed"
-CONF_CUSTOM_MODE_NUM = "custom_mode_num"
 
 CONFIG_SCHEMA = cv.Schema(
     {
@@ -48,9 +47,6 @@ CONFIG_SCHEMA = cv.Schema(
             accuracy_decimals=2,
             icon="mdi:run-fast",
         ),
-        cv.Optional(CONF_CUSTOM_MODE_NUM): sensor.sensor_schema(
-            icon="mdi:counter",
-        ),
     }
 )
 
@@ -77,6 +73,3 @@ async def to_code(config):
     if custommotionspeed_config := config.get(CONF_CUSTOM_MOTION_SPEED):
         sens = await sensor.new_sensor(custommotionspeed_config)
         cg.add(mr24hpc1_component.set_custom_motion_speed_sensor(sens))
-    if custommodenum_config := config.get(CONF_CUSTOM_MODE_NUM):
-        sens = await sensor.new_sensor(custommodenum_config)
-        cg.add(mr24hpc1_component.set_custom_mode_num_sensor(sens))

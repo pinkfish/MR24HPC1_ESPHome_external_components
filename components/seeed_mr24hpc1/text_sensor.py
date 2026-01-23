@@ -13,8 +13,6 @@ CONF_HARDWARE_VERSION = "hardware_version"
 CONF_KEEP_AWAY = "keep_away"
 CONF_MOTION_STATUS = "motion_status"
 
-CONF_CUSTOM_MODE_END = "custom_mode_end"
-
 
 # The entity category for read only diagnostic values, for example RSSI, uptime or MAC Address
 CONFIG_SCHEMA = {
@@ -39,9 +37,6 @@ CONFIG_SCHEMA = {
     ),
     cv.Optional(CONF_MOTION_STATUS): text_sensor.text_sensor_schema(
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC, icon="mdi:human-greeting"
-    ),
-    cv.Optional(CONF_CUSTOM_MODE_END): text_sensor.text_sensor_schema(
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC, icon="mdi:account-check"
     ),
 }
 
@@ -69,6 +64,3 @@ async def to_code(config):
     if motionstatus_config := config.get(CONF_MOTION_STATUS):
         sens = await text_sensor.new_text_sensor(motionstatus_config)
         cg.add(mr24hpc1_component.set_motion_status_text_sensor(sens))
-    if custommodeend_config := config.get(CONF_CUSTOM_MODE_END):
-        sens = await text_sensor.new_text_sensor(custommodeend_config)
-        cg.add(mr24hpc1_component.set_custom_mode_end_text_sensor(sens))
