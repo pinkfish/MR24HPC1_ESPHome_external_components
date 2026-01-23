@@ -122,6 +122,7 @@ Below are the graphic step-by-step details, please refer to the following to com
 
 Please supply power to the kit via a USB-C type cable. Be careful that the power input does not exceed 5V/1A, otherwise the product may be damaged.
 
+
 ### Step 2. Connect to the kit's hotspot "seedstudio-mr24hpc1"
 
 After the kit is powered on, a hotspot named **seedstudio-mr24hpc1** will be opened automatically, please search and connect to the hotspot. You can use your cell phone to connect to this network so you don't have to switch networks on your computer as often.
