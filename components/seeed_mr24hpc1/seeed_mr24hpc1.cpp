@@ -77,7 +77,7 @@ void MR24HPC1Component::setup() {
 // Timed polling of radar data
 void MR24HPC1Component::periodic_poll_() {
   this->get_radar_output_information_switch();  // Query the key status every so often
-  this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE;
+  this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
 
 // main loop
@@ -323,9 +323,10 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     ESP_LOGD(TAG, "Custom stuff: %d ", data[FRAME_DATA_INDEX]);
   } else if ((data[FRAME_COMMAND_WORD_INDEX] == 0x06) || (data[FRAME_COMMAND_WORD_INDEX] == 0x86)) {
     // none:0x00  close_to:0x01  far_away:0x02
+    /*
     if ((this->keep_away_text_sensor_ != nullptr) && (data[FRAME_DATA_INDEX] < 3)) {
       this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
-    }
+    }*/
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x07) || (data[FRAME_COMMAND_WORD_INDEX] == 0x87))) {
     ESP_LOGD(TAG, "Movement signs: %d ", data[FRAME_DATA_INDEX]);
