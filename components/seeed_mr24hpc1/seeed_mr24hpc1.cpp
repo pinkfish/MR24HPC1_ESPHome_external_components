@@ -456,7 +456,7 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
     ESP_LOGD(TAG, "Motion trigger time select %d %p", data[FRAME_DATA_INDEX], this->motion_trigger_number_);
     if (data[FRAME_DATA_INDEX] < 9) {
       if (this->motion_trigger_number_ != nullptr) {
-        this->motion_trigger_number_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
+        this->motion_trigger_number_->publish_state(data[FRAME_DATA_INDEX]);
       }
     }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
