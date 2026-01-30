@@ -35,14 +35,15 @@ void MR24HPC1Component::dump_config() {
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
 #ifdef USE_SELECT
-//  LOG_SELECT(" ", "Motion Boundary Select", this->motion_boundary_select_);
+  LOG_SELECT(" ", "Motion Boundary Select", this->motion_boundary_select_);
+  LOG_SELECT(" ", "Scene Mode Select", this->scene_mode_select_);
 #endif
 #ifdef USE_NUMBER
-//  LOG_NUMBER(" ", "Sensitivity Number", this->sensitivity_number_);
-//  LOG_NUMBER(" ", "Existence Threshold Number", this->existence_threshold_number_);
-//  LOG_NUMBER(" ", "Motion Threshold Number", this->motion_threshold_number_);
-//  LOG_NUMBER(" ", "Motion Trigger Time Number", this->motion_trigger_number_);
-//  LOG_NUMBER(" ", "Motion To Rest Time Number", this->motion_to_rest_number_);
+  LOG_NUMBER(" ", "Sensitivity Number", this->sensitivity_number_);
+  LOG_NUMBER(" ", "Existence Threshold Number", this->existence_threshold_number_);
+  LOG_NUMBER(" ", "Motion Threshold Number", this->motion_threshold_number_);
+  LOG_NUMBER(" ", "Motion Trigger Time Number", this->motion_trigger_number_);
+  LOG_NUMBER(" ", "Motion To Rest Time Number", this->motion_to_rest_number_);
 #endif
 }
 
@@ -378,17 +379,12 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x07) || (data[FRAME_COMMAND_WORD_INDEX] == 0x87))) {
     this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } /* else if ((this->existence_threshold_number_ != nullptr) &&
+  } else if ((this->existence_threshold_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
     this->existence_threshold_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if ((this->motion_threshold_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x09) || (data[FRAME_COMMAND_WORD_INDEX] == 0x89))) {
     this->motion_threshold_number_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->existence_boundary_select_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0a) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8a))) {
-    if (this->existence_boundary_select_->has_index(data[FRAME_DATA_INDEX] - 1)) {
-      this->existence_boundary_select_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX] - 1]);
-    }
   } else if ((this->motion_boundary_select_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0b) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8b))) {
     if (this->motion_boundary_select_->has_index(data[FRAME_DATA_INDEX] - 1)) {
@@ -404,7 +400,13 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     uint32_t move_to_rest_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
                                                data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
     this->motion_to_rest_number_->publish_state(move_to_rest_time);
-  } else if ((this->custom_unman_time_number_ != nullptr) &&
+  } /* else if ((this->existence_boundary_select_ != nullptr) &&
+             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0a) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8a))) {
+    if (this->existence_boundary_select_->has_index(data[FRAME_DATA_INDEX] - 1)) {
+      this->existence_boundary_select_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX] - 1]);
+    }
+  }
+    else if ((this->custom_unman_time_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0e) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8e))) {
     uint32_t enter_unmanned_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
                                                  data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
@@ -470,14 +472,16 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x07) {
-    // if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
-    //   this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
-    // } else {
-    ESP_LOGD(TAG, "Select has index offset %d", data[FRAME_DATA_INDEX]);
-    //}
+    if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
+      this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
+    } else {
+      ESP_LOGD(TAG, "Select has index offset %d", data[FRAME_DATA_INDEX]);
+    }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
     // 1-3
-    // this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
+    if (this->sensitivity_number_ != nullptr) {
+      this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
+    }
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x09) {
     // 1-4
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x81) {
