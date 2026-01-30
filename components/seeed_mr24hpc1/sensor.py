@@ -33,7 +33,7 @@ CONFIG_SCHEMA = cv.Schema(
             icon="mdi:run-fast",
         ),
         cv.Optional(CONF_STATIC_DISTANCE): sensor.sensor_schema(
-            entity_category=DEVICE_CLASS_DISTANCE, 
+            device_class=DEVICE_CLASS_DISTANCE, 
             unit_of_measurement=UNIT_METER,
             icon="mdi:walk"
         ),
