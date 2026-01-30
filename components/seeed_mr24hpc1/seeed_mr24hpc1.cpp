@@ -51,7 +51,7 @@ void MR24HPC1Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MR24HPC1...");
   this->check_uart_settings(115200);
 
-  this->poll_time_base_func_check_ = true;
+  this->last_recv_time_ = millis();
   this->check_dev_inf_sign_ = true;
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
   this->sg_data_len_ = 0;
@@ -73,7 +73,6 @@ void MR24HPC1Component::setup() {
 // Timed polling of radar data
 void MR24HPC1Component::periodic_poll_() {
   this->get_radar_output_information_switch();  // Query the key status every so often
-  this->poll_time_base_func_check_ = true;      // Query the base functionality information at regular intervals
   this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE;
 }
 
@@ -85,12 +84,12 @@ void MR24HPC1Component::loop() {
   while (this->available()) {
     this->read_byte(&byte);
     this->r24_split_data_frame_(byte);  // split data frame
+    this->last_recv_time_ = millis();
   }
 
-  // Polling Functions
-  if (this->poll_time_base_func_check_) {
+  // Polling Functions, wait till we see nothing on the channel for a bit, then ask for something new
+  if (millis() - this->last_recv_time_ > 150) {
     // Wait till we get something back before asking for something new.
-    this->poll_time_base_func_check_ = false;  // Avoiding high-speed polling that can cause the device to jam
     switch (this->sg_start_query_data_) {
       case STANDARD_FUNCTION_QUERY_PRODUCT_MODE:
         this->get_product_mode();
@@ -276,7 +275,6 @@ void MR24HPC1Component::r24_split_data_frame_(uint8_t value) {
         memcpy(this->sg_frame_prase_buf_, this->sg_frame_buf_, this->sg_frame_len_);
         if (get_frame_check_status(this->sg_frame_prase_buf_, this->sg_frame_len_)) {
           this->r24_parse_data_frame_(this->sg_frame_prase_buf_, this->sg_frame_len_);
-          this->poll_time_base_func_check_ = true;
         } else {
           ESP_LOGD(TAG, "frame check failer!");
         }

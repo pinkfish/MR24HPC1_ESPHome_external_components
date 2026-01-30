@@ -134,7 +134,7 @@ class MR24HPC1Component : public Component,
   uint8_t sg_frame_prase_buf_[FRAME_BUF_MAX_SIZE];
   int sg_start_query_data_;
   bool check_dev_inf_sign_;
-  bool poll_time_base_func_check_;
+  uint32_t last_recv_time_;
 
   void periodic_poll_();
   void r24_split_data_frame_(uint8_t value);
