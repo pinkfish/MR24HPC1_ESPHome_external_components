@@ -83,6 +83,7 @@ static const char *const S_UNMANNED_TIME_STR[9] = {"None", "10s",   "30s",   "1m
                                                    "5min", "10min", "30min", "60min"};
 static const char *const S_BOUNDARY_STR[10] = {"0.5m", "1.0m", "1.5m", "2.0m", "2.5m",
                                                "3.0m", "3.5m", "4.0m", "4.5m", "5.0m"};                // uint: m
+static const float S_BOUNDARY_MTR[10] = {0.0, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f};  // float: m
 static const float S_PRESENCE_OF_DETECTION_RANGE_STR[7] = {0.0f, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f};  // uint: m
 
 class MR24HPC1Component : public Component,

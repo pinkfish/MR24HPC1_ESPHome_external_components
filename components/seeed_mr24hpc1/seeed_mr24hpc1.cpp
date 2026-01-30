@@ -333,13 +333,13 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
       this->existance_energy_sensor_->publish_state(data[FRAME_DATA_INDEX]);
     }
     if (this->static_distance_sensor_ != nullptr) {
-      this->static_distance_sensor_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX + 1]]);
+      this->static_distance_sensor_->publish_state(S_BOUNDARY_MTR[data[FRAME_DATA_INDEX + 1]]);
     }
     if (this->motion_energy_sensor_ != nullptr) {
       this->motion_energy_sensor_->publish_state(data[FRAME_DATA_INDEX + 2]);
     }
     if (this->motion_distance_sensor_ != nullptr) {
-      this->motion_distance_sensor_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX + 3]]);
+      this->motion_distance_sensor_->publish_state(S_BOUNDARY_MTR[data[FRAME_DATA_INDEX + 3]]);
     }
     if (this->motion_speed_sensor_ != nullptr) {
       this->motion_speed_sensor_->publish_state(data[FRAME_DATA_INDEX + 4]);
