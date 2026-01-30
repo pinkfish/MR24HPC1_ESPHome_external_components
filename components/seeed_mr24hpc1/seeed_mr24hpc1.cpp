@@ -66,7 +66,12 @@ void MR24HPC1Component::setup() {
   memset(this->sg_frame_prase_buf_, 0, FRAME_BUF_MAX_SIZE);
   memset(this->sg_frame_buf_, 0, FRAME_BUF_MAX_SIZE);
 
-  this->set_interval(8000, [this]() { this->periodic_poll_(); });
+  this->set_interval(8000, [this]() {
+    if (this->sg_start_query_data_ > UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED ||
+        millis() - this->last_recv_time_ > 8000) {
+      this->periodic_poll_();
+    }
+  });
   ESP_LOGCONFIG(TAG, "Set up MR24HPC1 complete");
 }
 
