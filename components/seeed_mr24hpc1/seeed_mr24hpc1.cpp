@@ -35,17 +35,14 @@ void MR24HPC1Component::dump_config() {
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
 #ifdef USE_SELECT
-  LOG_SELECT(" ", "Scene Mode Select", this->scene_mode_select_);
-  LOG_SELECT(" ", "Unman Time Select", this->unman_time_select_);
-  LOG_SELECT(" ", "Existence Boundary Select", this->existence_boundary_select_);
-  LOG_SELECT(" ", "Motion Boundary Select", this->motion_boundary_select_);
+//  LOG_SELECT(" ", "Motion Boundary Select", this->motion_boundary_select_);
 #endif
 #ifdef USE_NUMBER
-  LOG_NUMBER(" ", "Sensitivity Number", this->sensitivity_number_);
-  LOG_NUMBER(" ", "Existence Threshold Number", this->existence_threshold_number_);
-  LOG_NUMBER(" ", "Motion Threshold Number", this->motion_threshold_number_);
-  LOG_NUMBER(" ", "Motion Trigger Time Number", this->motion_trigger_number_);
-  LOG_NUMBER(" ", "Motion To Rest Time Number", this->motion_to_rest_number_);
+//  LOG_NUMBER(" ", "Sensitivity Number", this->sensitivity_number_);
+//  LOG_NUMBER(" ", "Existence Threshold Number", this->existence_threshold_number_);
+//  LOG_NUMBER(" ", "Motion Threshold Number", this->motion_threshold_number_);
+//  LOG_NUMBER(" ", "Motion Trigger Time Number", this->motion_trigger_number_);
+//  LOG_NUMBER(" ", "Motion To Rest Time Number", this->motion_to_rest_number_);
 #endif
 }
 
@@ -410,31 +407,31 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
                                                  data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
     float custom_unmanned_time = enter_unmanned_time / 1000.0;
     this->custom_unman_time_number_->publish_state(custom_unmanned_time);
-    
+
 }*/
-else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
-  if (data[FRAME_DATA_INDEX]) {
-    this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
-  } else {
-    this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
+  else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
+    if (data[FRAME_DATA_INDEX]) {
+      this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
+    } else {
+      this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
+    }
+    // if (this->underlying_open_function_switch_ != nullptr) {
+    //   this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
+    // }
+  } /*
+  else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
+   this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+  } else if ((this->custom_spatial_motion_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x82)) {
+   this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+  } else if ((this->custom_presence_of_detection_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x83)) {
+   this->custom_presence_of_detection_sensor_->publish_state(
+       S_PRESENCE_OF_DETECTION_RANGE_STR[data[FRAME_DATA_INDEX]]);
+  } else if ((this->custom_motion_distance_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x84)) {
+   this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX] * 0.5f);
+  } else if ((this->custom_motion_speed_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x85)) {
+   this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX] - 10) * 0.5f);
   }
-  //if (this->underlying_open_function_switch_ != nullptr) {
-  //  this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
- // }
-} /*
-else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
- this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-} else if ((this->custom_spatial_motion_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x82)) {
- this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-} else if ((this->custom_presence_of_detection_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x83)) {
- this->custom_presence_of_detection_sensor_->publish_state(
-     S_PRESENCE_OF_DETECTION_RANGE_STR[data[FRAME_DATA_INDEX]]);
-} else if ((this->custom_motion_distance_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x84)) {
- this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX] * 0.5f);
-} else if ((this->custom_motion_speed_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x85)) {
- this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX] - 10) * 0.5f);
-}
- */
+   */
 }
 
 void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
@@ -470,25 +467,20 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x07) {
-    if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
-      this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
-    } else {
-      ESP_LOGD(TAG, "Select has index offset %d Error", data[FRAME_DATA_INDEX]);
-    }
-  } else if ((this->sensitivity_number_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
+    // if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
+    //   this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
+    // } else {
+    ESP_LOGD(TAG, "Select has index offset %d", data[FRAME_DATA_INDEX]);
+    //}
+  } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
     // 1-3
-    this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
+    // this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x09) {
     // 1-4
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x81) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x87) {
-    if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
-      this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
-    } else {
-      ESP_LOGD(TAG, "Select has index offset %d Error", data[FRAME_DATA_INDEX]);
-    }
+    ESP_LOGD(TAG, "Select has index offset %d ", data[FRAME_DATA_INDEX]);
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
   }
