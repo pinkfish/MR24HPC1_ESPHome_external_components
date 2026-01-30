@@ -50,6 +50,7 @@ void MR24HPC1Component::setup() {
   this->check_uart_settings(115200);
 
   this->last_recv_time_ = millis();
+  this->last_send_time_ = millis();
   this->check_dev_inf_sign_ = true;
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
   this->sg_data_len_ = 0;
@@ -91,8 +92,9 @@ void MR24HPC1Component::loop() {
   }
 
   // Polling Functions, wait till we see nothing on the channel for a bit, then ask for something new
-  if (millis() - this->last_recv_time_ > 150 &&
+  if (millis() - this->last_recv_time_ > 150 && millis() > this->last_send_time_ + 150 &&
       this->sg_start_query_data_ <= UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED) {
+    this->last_send_time_ = millis();
     ESP_LOGD(TAG, "Polling State:%d", this->sg_start_query_data_);
     // Wait till we get something back before asking for something new.
     switch (this->sg_start_query_data_) {

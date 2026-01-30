@@ -135,6 +135,7 @@ class MR24HPC1Component : public Component,
   int sg_start_query_data_;
   bool check_dev_inf_sign_;
   uint32_t last_recv_time_;
+  uint32_t last_send_time_;
 
   void periodic_poll_();
   void r24_split_data_frame_(uint8_t value);
