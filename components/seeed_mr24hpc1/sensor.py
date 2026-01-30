@@ -5,7 +5,6 @@ from esphome.const import (
     DEVICE_CLASS_DISTANCE,
     DEVICE_CLASS_ENERGY,
     UNIT_METER,
-    UNIT_WATT_HOUR,
 )
 from . import CONF_MR24HPC1_ID, MR24HPC1Component
 
