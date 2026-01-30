@@ -30,7 +30,8 @@ void MR24HPC1Component::dump_config() {
 #endif
 #ifdef USE_SWITCH
  // LOG_SWITCH(" ", "Underly Open Function Switch", this->underlying_open_function_switch_);
-#endif
+
+ #endif
 #ifdef USE_BUTTON
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
