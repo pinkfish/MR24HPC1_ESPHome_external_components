@@ -37,7 +37,7 @@ void MR24HPC1Component::dump_config() {
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
 #ifdef USE_SELECT
-  LOG_SELECT(" ", "Presence Timeout Select", this->motion_timeout_select);
+  LOG_SELECT(" ", "Presence Timeout Select", this->motion_timeout_select_);
   LOG_SELECT(" ", "Scene Mode Select", this->scene_mode_select_);
 #endif
 #ifdef USE_NUMBER
