@@ -8,19 +8,15 @@ from esphome.const import (
 from .. import CONF_MR24HPC1_ID, MR24HPC1Component, mr24hpc1_ns
 
 SensitivityNumber = mr24hpc1_ns.class_("SensitivityNumber", number.Number)
-CustomModeNumber = mr24hpc1_ns.class_("CustomModeNumber", number.Number)
 ExistenceThresholdNumber = mr24hpc1_ns.class_("ExistenceThresholdNumber", number.Number)
 MotionThresholdNumber = mr24hpc1_ns.class_("MotionThresholdNumber", number.Number)
 MotionTriggerTimeNumber = mr24hpc1_ns.class_("MotionTriggerTimeNumber", number.Number)
 MotionToRestTimeNumber = mr24hpc1_ns.class_("MotionToRestTimeNumber", number.Number)
-CustomUnmanTimeNumber = mr24hpc1_ns.class_("CustomUnmanTimeNumber", number.Number)
 
-CONF_CUSTOM_MODE = "custom_mode"
 CONF_EXISTENCE_THRESHOLD = "existence_threshold"
 CONF_MOTION_THRESHOLD = "motion_threshold"
 CONF_MOTION_TRIGGER = "motion_trigger"
 CONF_MOTION_TO_REST = "motion_to_rest"
-CONF_CUSTOM_UNMAN_TIME = "custom_unman_time"
 
 CONFIG_SCHEMA = cv.Schema(
     {
@@ -29,11 +25,6 @@ CONFIG_SCHEMA = cv.Schema(
             SensitivityNumber,
             entity_category=ENTITY_CATEGORY_CONFIG,
             icon="mdi:archive-check-outline",
-        ),
-        cv.Optional(CONF_CUSTOM_MODE): number.number_schema(
-            CustomModeNumber,
-            entity_category=ENTITY_CATEGORY_CONFIG,
-            icon="mdi:cog",
         ),
         cv.Optional(CONF_EXISTENCE_THRESHOLD): number.number_schema(
             ExistenceThresholdNumber,
@@ -55,12 +46,6 @@ CONFIG_SCHEMA = cv.Schema(
             icon="mdi:camera-timer",
             unit_of_measurement="ms",
         ),
-        cv.Optional(CONF_CUSTOM_UNMAN_TIME): number.number_schema(
-            CustomUnmanTimeNumber,
-            entity_category=ENTITY_CATEGORY_CONFIG,
-            icon="mdi:camera-timer",
-            unit_of_measurement="s",
-        ),
     }
 )
 
@@ -76,15 +61,6 @@ async def to_code(config):
         )
         await cg.register_parented(n, mr24hpc1_component)
         cg.add(mr24hpc1_component.set_sensitivity_number(n))
-    if custom_mode_config := config.get(CONF_CUSTOM_MODE):
-        n = await number.new_number(
-            custom_mode_config,
-            min_value=0,
-            max_value=4,
-            step=1,
-        )
-        await cg.register_parented(n, mr24hpc1_component)
-        cg.add(mr24hpc1_component.set_custom_mode_number(n))
     if existence_threshold_config := config.get(CONF_EXISTENCE_THRESHOLD):
         n = await number.new_number(
             existence_threshold_config,
@@ -121,12 +97,3 @@ async def to_code(config):
         )
         await cg.register_parented(n, mr24hpc1_component)
         cg.add(mr24hpc1_component.set_motion_to_rest_number(n))
-    if custom_unman_time_config := config.get(CONF_CUSTOM_UNMAN_TIME):
-        n = await number.new_number(
-            custom_unman_time_config,
-            min_value=0,
-            max_value=3600,
-            step=1,
-        )
-        await cg.register_parented(n, mr24hpc1_component)
-        cg.add(mr24hpc1_component.set_custom_unman_time_number(n))

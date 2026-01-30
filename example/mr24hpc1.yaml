@@ -77,8 +77,6 @@ text_sensor:
       name: "Active Reporting Of Proximity"
     motion_status:
       name: "Motion Information"
-    custom_mode_end:
-      name: "Custom Mode Status"
 
 binary_sensor:
   - platform: seeed_mr24hpc1
@@ -87,20 +85,8 @@ binary_sensor:
 
 sensor:
   - platform: seeed_mr24hpc1
-    custom_presence_of_detection:
-      name: "Static Distance"
     movement_signs:
       name: "Body Movement Parameter"
-    custom_motion_distance:
-      name: "Motion Distance"
-    custom_spatial_static_value:
-      name: "Existence Energy"
-    custom_spatial_motion_value:
-      name: "Motion Energy"
-    custom_motion_speed:
-      name: "Motion Speed"
-    custom_mode_num:
-      name: "Current Custom Mode"
 
 switch:
   - platform: seeed_mr24hpc1
@@ -111,8 +97,6 @@ button:
   - platform: seeed_mr24hpc1
     restart:
       name: "Module Restart"
-    custom_set_end:
-      name: "End Of Custom Mode Settings"
 
 select:
   - platform: seeed_mr24hpc1
@@ -129,8 +113,6 @@ number:
   - platform: seeed_mr24hpc1
     sensitivity:
       name: "Sensitivity"
-    custom_mode:
-      name: "Custom Mode"
     existence_threshold:
       name: "Existence Energy Threshold"
     motion_threshold:
@@ -139,5 +121,3 @@ number:
       name: "Motion Trigger Time"
     motion_to_rest:
       name: "Motion To Rest Time"
-    custom_unman_time:
-      name: "Time For Entering No Person State (Underlying Open Function)"

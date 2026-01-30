@@ -60,14 +60,6 @@ views:
         cards:
           - type: entities
             entities: 
-              - entity: sensor.{$DEVICE}_custom_mode_status
-                name: Custom Mode Status
-              - entity: number.{$DEVICE}_custom_mode
-                name: Custom Mode
-              - entity: sensor.{$DEVICE}_current_custom_mode
-                name: Current Custom Mode
-              - entity: button.{$DEVICE}_end_of_custom_mode_settings
-                name: End Of Custom Mode Settings
               - entity: select.{$DEVICE}_existence_boundary
                 name: Existence Boundary
               - entity: select.{$DEVICE}_motion_boundary
