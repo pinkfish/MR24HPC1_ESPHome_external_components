@@ -95,127 +95,117 @@ void MR24HPC1Component::loop() {
     this->r24_split_data_frame_(byte);  // split data frame
   }
 
-  if ((this->s_output_info_switch_flag_ == OUTPUT_SWTICH_OFF) &&
-      (this->sg_start_query_data_ > CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED) && (!this->check_dev_inf_sign_)) {
-    this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_SCENE_MODE;
-  } else if ((this->s_output_info_switch_flag_ == OUTPUT_SWITCH_ON) &&
-             (this->sg_start_query_data_ < CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY) && (!this->check_dev_inf_sign_)) {
-    this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY;
-  } else if (this->check_dev_inf_sign_ && (this->sg_start_query_data_ > STANDARD_FUNCTION_QUERY_HARDWARE_MODE)) {
-    // First time power up information polling
-    this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
-  }
-
   // Polling Functions
   if (this->poll_time_base_func_check_) {
+    // Wait till we get something back before asking for something new.
+    this->poll_time_base_func_check_ = false;  // Avoiding high-speed polling that can cause the device to jam
     switch (this->sg_start_query_data_) {
       case STANDARD_FUNCTION_QUERY_PRODUCT_MODE:
         this->get_product_mode();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_ID;
         break;
       case STANDARD_FUNCTION_QUERY_PRODUCT_ID:
         this->get_product_id();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION;
         break;
       case STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION:
         this->get_product_mode();
         this->get_product_id();
         this->get_firmware_version();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HARDWARE_MODE;
         break;
       case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:  // Above is the equipment information
         this->get_product_mode();
         this->get_product_id();
         this->get_hardware_model();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_SCENE_MODE;
         this->check_dev_inf_sign_ = false;
         break;
       case STANDARD_FUNCTION_QUERY_SCENE_MODE:
         this->get_scene_mode();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_SENSITIVITY;
         break;
       case STANDARD_FUNCTION_QUERY_SENSITIVITY:
         this->get_sensitivity();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_UNMANNED_TIME;
         break;
       case STANDARD_FUNCTION_QUERY_UNMANNED_TIME:
         this->get_unmanned_time();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HUMAN_STATUS;
         break;
       case STANDARD_FUNCTION_QUERY_HUMAN_STATUS:
         this->get_human_status();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HUMAN_MOTION_INF;
         break;
       case STANDARD_FUNCTION_QUERY_HUMAN_MOTION_INF:
         this->get_human_motion_info();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER;
         break;
       case STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER:
         this->get_body_motion_params();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
         break;
       case STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS:  // The above is the basic functional information
         this->get_keep_away();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE;
         break;
       case STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE:
         this->get_heartbeat_packet();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY;
         break;
       case CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY:
         this->get_existence_boundary();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY:
         this->get_motion_boundary();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD;
         break;
       case CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD:
         this->get_existence_threshold();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD:
         this->get_motion_threshold();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME:
         this->get_motion_trigger_time();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME:
         this->get_motion_to_rest_time();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED;
         break;
       case CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED:
         this->get_custom_unman_time();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_HUMAN_STATUS;
         if (this->s_output_info_switch_flag_ == OUTPUT_SWTICH_OFF) {
-          this->poll_time_base_func_check_ = false;  // Avoiding high-speed polling that can cause the device to jam
         }
         break;
       case UNDERLY_FUNCTION_QUERY_HUMAN_STATUS:
         this->get_human_status();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE;
         break;
       case UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE:
         this->get_spatial_static_value();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_MOTION_VALUE;
         break;
       case UNDERLY_FUNCTION_QUERY_SPATIAL_MOTION_VALUE:
         this->get_spatial_motion_value();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_DISTANCE_OF_STATIC_OBJECT;
         break;
       case UNDERLY_FUNCTION_QUERY_DISTANCE_OF_STATIC_OBJECT:
         this->get_distance_of_static_object();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_DISTANCE_OF_MOVING_OBJECT;
         break;
       case UNDERLY_FUNCTION_QUERY_DISTANCE_OF_MOVING_OBJECT:
         this->get_distance_of_moving_object();
-        this->sg_start_query_data_++;
+        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED;
         break;
       case UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED:
         this->get_target_movement_speed();
-        this->sg_start_query_data_++;
+        // this->sg_start_query_data_++;
         this->poll_time_base_func_check_ = false;  // Avoiding high-speed polling that can cause the device to jam
         break;
       default:
@@ -317,6 +307,7 @@ void MR24HPC1Component::r24_split_data_frame_(uint8_t value) {
         memcpy(this->sg_frame_prase_buf_, this->sg_frame_buf_, this->sg_frame_len_);
         if (get_frame_check_status(this->sg_frame_prase_buf_, this->sg_frame_len_)) {
           this->r24_parse_data_frame_(this->sg_frame_prase_buf_, this->sg_frame_len_);
+          this->poll_time_base_func_check_ = true;
         } else {
           ESP_LOGD(TAG, "frame check failer!");
         }
@@ -525,26 +516,31 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
   if ((this->has_target_binary_sensor_ != nullptr) &&
       ((data[FRAME_COMMAND_WORD_INDEX] == 0x01) || (data[FRAME_COMMAND_WORD_INDEX] == 0x81))) {
     this->has_target_binary_sensor_->publish_state(S_SOMEONE_EXISTS_STR[data[FRAME_DATA_INDEX]]);
+    ESP_LOGD(TAG, "Binary sensor state %d ", data[FRAME_DATA_INDEX]);
   } else if ((this->motion_status_text_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x02) || (data[FRAME_COMMAND_WORD_INDEX] == 0x82))) {
     if (data[FRAME_DATA_INDEX] < 3) {
       this->motion_status_text_sensor_->publish_state(S_MOTION_STATUS_STR[data[FRAME_DATA_INDEX]]);
     }
+    ESP_LOGD(TAG, "Motion sensor state %d ", data[FRAME_DATA_INDEX]);
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x03) || (data[FRAME_COMMAND_WORD_INDEX] == 0x83))) {
     this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+    ESP_LOGD(TAG, "Movement signs sensor state %d ", data[FRAME_DATA_INDEX]);
   } else if ((this->unman_time_select_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
     // none:0x00  1s:0x01 30s:0x02 1min:0x03 2min:0x04 5min:0x05 10min:0x06 30min:0x07 1hour:0x08
     if (data[FRAME_DATA_INDEX] < 9) {
       this->unman_time_select_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
     }
+    ESP_LOGD(TAG, "Unman time select %d ", data[FRAME_DATA_INDEX]);
   } else if ((this->keep_away_text_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
     // none:0x00  close_to:0x01  far_away:0x02
     if (data[FRAME_DATA_INDEX] < 3) {
       this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
     }
+    ESP_LOGD(TAG, "Keep Away sensor %d ", data[FRAME_DATA_INDEX]);
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
   }
