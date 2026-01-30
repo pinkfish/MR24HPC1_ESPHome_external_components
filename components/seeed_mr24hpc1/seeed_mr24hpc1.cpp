@@ -330,7 +330,7 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Custom stuff: %d ", data[FRAME_DATA_INDEX]);
     if (this->existence_energy_sensor_ != nullptr) {
-      this->existance_energy_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+      this->existence_energy_sensor_->publish_state(data[FRAME_DATA_INDEX]);
     }
     if (this->static_distance_sensor_ != nullptr) {
       this->static_distance_sensor_->publish_state(S_BOUNDARY_MTR[data[FRAME_DATA_INDEX + 1]]);
