@@ -102,6 +102,11 @@ class MR24HPC1Component : public Component,
 #endif
 #ifdef USE_SENSOR
   SUB_SENSOR(movement_signs)
+  SUB_SENSOR(existence_energy)
+  SUB_SENSOR(motion_energy)
+  SUB_SENSOR(motion_speed)
+  SUB_SENSOR(static_distance)
+  SUB_SENSOR(motion_distance)
 #endif
 #ifdef USE_SWITCH
   SUB_SWITCH(underlying_open_function)
