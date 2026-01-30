@@ -164,7 +164,6 @@ class MR24HPC1Component : public Component,
   void get_scene_mode();
   void get_sensitivity();
   void get_unmanned_time();
-  void get_custom_mode();
   void get_existence_boundary();
   void get_motion_boundary();
   void get_spatial_static_value();

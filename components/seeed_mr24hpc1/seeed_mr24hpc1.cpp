@@ -657,7 +657,6 @@ void MR24HPC1Component::set_scene_mode(uint8_t value) {
   this->send_query_(send_data, send_data_len);
   this->get_scene_mode();
   this->get_sensitivity();
-  this->get_custom_mode();
   this->get_existence_boundary();
   this->get_motion_boundary();
   this->get_existence_threshold();
