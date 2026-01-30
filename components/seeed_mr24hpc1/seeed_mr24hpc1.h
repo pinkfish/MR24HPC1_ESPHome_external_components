@@ -136,7 +136,7 @@ class MR24HPC1Component : public Component,
   bool check_dev_inf_sign_;
   bool poll_time_base_func_check_;
 
-  void update_();
+  void periodic_poll_();
   void r24_split_data_frame_(uint8_t value);
   void r24_parse_data_frame_(uint8_t *data, uint8_t len);
   void r24_frame_parse_open_underlying_information_(uint8_t *data);

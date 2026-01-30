@@ -410,17 +410,17 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
                                                  data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
     float custom_unmanned_time = enter_unmanned_time / 1000.0;
     this->custom_unman_time_number_->publish_state(custom_unmanned_time);
-    */
-}
+    
+}*/
 else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
   if (data[FRAME_DATA_INDEX]) {
     this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
   } else {
     this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
   }
-  if (this->underlying_open_function_switch_ != nullptr) {
-    this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
-  }
+  //if (this->underlying_open_function_switch_ != nullptr) {
+  //  this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
+ // }
 } /*
 else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
  this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
