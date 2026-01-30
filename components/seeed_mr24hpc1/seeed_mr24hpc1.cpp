@@ -28,9 +28,6 @@ void MR24HPC1Component::dump_config() {
 #ifdef USE_SENSOR
   LOG_SENSOR(" ", "Movement Signs Sensor", this->movement_signs_sensor_);
 #endif
-#ifdef USE_SWITCH
-   LOG_SWITCH(" ", "Underly Open Function Switch", this->underlying_open_function_switch_);
-#endif
 #ifdef USE_BUTTON
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
@@ -340,12 +337,6 @@ void MR24HPC1Component::r24_frame_parse_product_information_(uint8_t *data) {
 // Parsing the underlying open parameters
 void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x00) {
-    /*
-    if (this->underlying_open_function_switch_ != nullptr) {
-      this->underlying_open_function_switch_->publish_state(
-          data[FRAME_DATA_INDEX]);  // Underlying Open Parameter Switch Status Updates
-    }
-          */
     if (data[FRAME_DATA_INDEX]) {
       this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
     } else {
@@ -400,43 +391,13 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     uint32_t move_to_rest_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
                                                data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
     this->motion_to_rest_number_->publish_state(move_to_rest_time);
-  } /* else if ((this->existence_boundary_select_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0a) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8a))) {
-    if (this->existence_boundary_select_->has_index(data[FRAME_DATA_INDEX] - 1)) {
-      this->existence_boundary_select_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX] - 1]);
-    }
-  }
-    else if ((this->custom_unman_time_number_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0e) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8e))) {
-    uint32_t enter_unmanned_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
-                                                 data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
-    float custom_unmanned_time = enter_unmanned_time / 1000.0;
-    this->custom_unman_time_number_->publish_state(custom_unmanned_time);
-
-}*/
-  else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
+  } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
     if (data[FRAME_DATA_INDEX]) {
       this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
     } else {
       this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
     }
-    // if (this->underlying_open_function_switch_ != nullptr) {
-    //   this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
-    // }
-  } /*
-  else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
-   this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->custom_spatial_motion_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x82)) {
-   this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->custom_presence_of_detection_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x83)) {
-   this->custom_presence_of_detection_sensor_->publish_state(
-       S_PRESENCE_OF_DETECTION_RANGE_STR[data[FRAME_DATA_INDEX]]);
-  } else if ((this->custom_motion_distance_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x84)) {
-   this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX] * 0.5f);
-  } else if ((this->custom_motion_speed_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x85)) {
-   this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX] - 10) * 0.5f);
   }
-   */
 }
 
 void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
