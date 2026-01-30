@@ -339,15 +339,18 @@ void MR24HPC1Component::r24_frame_parse_product_information_(uint8_t *data) {
 // Parsing the underlying open parameters
 void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x00) {
+    /*
     if (this->underlying_open_function_switch_ != nullptr) {
       this->underlying_open_function_switch_->publish_state(
           data[FRAME_DATA_INDEX]);  // Underlying Open Parameter Switch Status Updates
     }
+          */
     if (data[FRAME_DATA_INDEX]) {
       this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
     } else {
       this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
     }
+
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Custom stuff: %d ", data[FRAME_DATA_INDEX]);
     /*
@@ -375,7 +378,7 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x07) || (data[FRAME_COMMAND_WORD_INDEX] == 0x87))) {
     this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->existence_threshold_number_ != nullptr) &&
+  } /* else if ((this->existence_threshold_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
     this->existence_threshold_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if ((this->motion_threshold_number_ != nullptr) &&
@@ -401,7 +404,6 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     uint32_t move_to_rest_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
                                                data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
     this->motion_to_rest_number_->publish_state(move_to_rest_time);
-    /*
   } else if ((this->custom_unman_time_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0e) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8e))) {
     uint32_t enter_unmanned_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
@@ -409,31 +411,31 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     float custom_unmanned_time = enter_unmanned_time / 1000.0;
     this->custom_unman_time_number_->publish_state(custom_unmanned_time);
     */
-  } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
-    if (data[FRAME_DATA_INDEX]) {
-      this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
-    } else {
-      this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
-    }
-    if (this->underlying_open_function_switch_ != nullptr) {
-      this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
-    }
-  }  /*
-  else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
-    this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->custom_spatial_motion_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x82)) {
-    this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-  } else if ((this->custom_presence_of_detection_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x83)) {
-    this->custom_presence_of_detection_sensor_->publish_state(
-        S_PRESENCE_OF_DETECTION_RANGE_STR[data[FRAME_DATA_INDEX]]);
-  } else if ((this->custom_motion_distance_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x84)) {
-    this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX] * 0.5f);
-  } else if ((this->custom_motion_speed_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x85)) {
-    this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX] - 10) * 0.5f);
-  }
-    */
 }
-
+else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
+  if (data[FRAME_DATA_INDEX]) {
+    this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
+  } else {
+    this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
+  }
+  if (this->underlying_open_function_switch_ != nullptr) {
+    this->underlying_open_function_switch_->publish_state(data[FRAME_DATA_INDEX]);
+  }
+} /*
+else if ((this->custom_spatial_static_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x81)) {
+ this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+} else if ((this->custom_spatial_motion_value_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x82)) {
+ this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+} else if ((this->custom_presence_of_detection_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x83)) {
+ this->custom_presence_of_detection_sensor_->publish_state(
+     S_PRESENCE_OF_DETECTION_RANGE_STR[data[FRAME_DATA_INDEX]]);
+} else if ((this->custom_motion_distance_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x84)) {
+ this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX] * 0.5f);
+} else if ((this->custom_motion_speed_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x85)) {
+ this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX] - 10) * 0.5f);
+}
+ */
+}
 
 void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
   switch (data[FRAME_CONTROL_WORD_INDEX]) {
@@ -507,18 +509,16 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x03) || (data[FRAME_COMMAND_WORD_INDEX] == 0x83))) {
     this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
     ESP_LOGD(TAG, "Movement signs sensor state %d ", data[FRAME_DATA_INDEX]);
-  } else if ((this->unman_time_select_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
+  } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
     // none:0x00  1s:0x01 30s:0x02 1min:0x03 2min:0x04 5min:0x05 10min:0x06 30min:0x07 1hour:0x08
     if (data[FRAME_DATA_INDEX] < 9) {
-      this->unman_time_select_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
+      // this->unman_time_select_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
     }
     ESP_LOGD(TAG, "Unman time select %d ", data[FRAME_DATA_INDEX]);
-  } else if ((this->keep_away_text_sensor_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
+  } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
     // none:0x00  close_to:0x01  far_away:0x02
     if (data[FRAME_DATA_INDEX] < 3) {
-      this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
+      // this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
     }
     ESP_LOGD(TAG, "Keep Away sensor %d ", data[FRAME_DATA_INDEX]);
   } else {
@@ -544,15 +544,15 @@ void MR24HPC1Component::get_radar_output_information_switch() {
 }
 
 // Issuance of product model orders
-void MR24HPC1Component::get_product_mode() { 
+void MR24HPC1Component::get_product_mode() {
   ESP_LOGD(TAG, "get_product_mode");
-  this->send_query_(GET_PRODUCT_MODE, sizeof(GET_PRODUCT_MODE)); 
+  this->send_query_(GET_PRODUCT_MODE, sizeof(GET_PRODUCT_MODE));
 }
 
 // Issuing the Get Product ID command
-void MR24HPC1Component::get_product_id() { 
+void MR24HPC1Component::get_product_id() {
   ESP_LOGD(TAG, "get_product_id");
-  this->send_query_(GET_PRODUCT_ID, sizeof(GET_PRODUCT_ID)); 
+  this->send_query_(GET_PRODUCT_ID, sizeof(GET_PRODUCT_ID));
 }
 
 // Issuing hardware model commands
@@ -573,13 +573,13 @@ void MR24HPC1Component::get_human_status() {
 }
 
 void MR24HPC1Component::get_human_motion_info() {
-    ESP_LOGD(TAG, "get_human_motion_info");
+  ESP_LOGD(TAG, "get_human_motion_info");
 
   this->send_query_(GET_HUMAN_MOTION_INFORMATION, sizeof(GET_HUMAN_MOTION_INFORMATION));
 }
 
 void MR24HPC1Component::get_body_motion_params() {
-    ESP_LOGD(TAG, "get_body_motion_params");
+  ESP_LOGD(TAG, "get_body_motion_params");
   this->send_query_(GET_BODY_MOTION_PARAMETERS, sizeof(GET_BODY_MOTION_PARAMETERS));
 }
 
