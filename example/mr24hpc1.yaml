@@ -90,6 +90,14 @@ sensor:
   - platform: seeed_mr24hpc1
     movement_signs:
       name: "Body Movement Parameter"
+    motion_distance:
+      name: "Motion Distance"
+    existance_energy:
+      name: "Existence Energy"
+    spatial_motion_value:
+      name: "Motion Energy"
+    motion_speed:
+      name: "Motion Speed"
 
 button:
   - platform: seeed_mr24hpc1

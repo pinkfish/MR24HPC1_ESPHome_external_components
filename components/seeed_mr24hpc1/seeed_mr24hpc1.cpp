@@ -21,12 +21,17 @@ void MR24HPC1Component::dump_config() {
   LOG_TEXT_SENSOR(" ", "Firware Verison Text Sensor", this->firware_version_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Keep Away Text Sensor", this->keep_away_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Motion Status Text Sensor", this->motion_status_text_sensor_);
+  LOG_TEXT_SENSOR(" ", "Static Distance Sensor", this->static_distance_sensor_);
+  LOG_TEXT_SENSOR(" ", "Motion Distance Sensor", this->motion_distance_sensor_);
 #endif
 #ifdef USE_BINARY_SENSOR
   LOG_BINARY_SENSOR(" ", "Has Target Binary Sensor", this->has_target_binary_sensor_);
 #endif
 #ifdef USE_SENSOR
   LOG_SENSOR(" ", "Movement Signs Sensor", this->movement_signs_sensor_);
+  LOG_SENSOR(" ", "Existance Energy Sensor", this->existence_energy_sensor_);
+  LOG_SENSOR(" ", "Motion Energy Sensor", this->motion_energy_sensor_);
+  LOG_SENSOR(" ", "Motion Speed Sensor", this->motion_speed_sensor_);
 #endif
 #ifdef USE_BUTTON
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
@@ -324,12 +329,26 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     }
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Custom stuff: %d ", data[FRAME_DATA_INDEX]);
+    if (this->existence_energy_sensor_ != nullptr) {
+      this->existance_energy_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+    }
+    if (this->static_distance_sensor_ != nullptr) {
+      this->static_distance_sensor_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX + 1]]);
+    }
+    if (this->motion_energy_sensor_ != nullptr) {
+      this->motion_energy_sensor_->publish_state(data[FRAME_DATA_INDEX + 2]);
+    }
+    if (this->motion_distance_sensor_ != nullptr) {
+      this->motion_distance_sensor_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX + 3]]);
+    }
+    if (this->motion_speed_sensor_ != nullptr) {
+      this->motion_speed_sensor_->publish_state(data[FRAME_DATA_INDEX + 4]);
+    }
   } else if ((data[FRAME_COMMAND_WORD_INDEX] == 0x06) || (data[FRAME_COMMAND_WORD_INDEX] == 0x86)) {
     // none:0x00  close_to:0x01  far_away:0x02
-    /*
     if ((this->keep_away_text_sensor_ != nullptr) && (data[FRAME_DATA_INDEX] < 3)) {
       this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
-    }*/
+    }
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x07) || (data[FRAME_COMMAND_WORD_INDEX] == 0x87))) {
     ESP_LOGD(TAG, "Movement signs: %d ", data[FRAME_DATA_INDEX]);
