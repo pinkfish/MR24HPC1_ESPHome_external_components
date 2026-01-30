@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["uart"]
 # is the code owner of the relevant code base
-CODEOWNERS = ["@limengdu"]
+CODEOWNERS = ["@pinkfish"]
 # The current component or platform can be configured or defined multiple times in the same configuration file.
 MULTI_CONF = True
 
