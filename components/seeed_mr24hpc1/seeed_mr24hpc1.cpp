@@ -101,14 +101,10 @@ void MR24HPC1Component::loop() {
         this->get_product_id();
         break;
       case STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION:
-        // this->get_product_mode();
-        // this->get_product_id();
         this->get_firmware_version();
         break;
-      case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:  
-      // Above is the equipment information
-                                                   //  this->get_product_mode();
-                                                   // this->get_product_id();
+      case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:
+        // Above is the equipment information
         this->get_hardware_model();
         this->check_dev_inf_sign_ = false;
         break;
@@ -130,37 +126,13 @@ void MR24HPC1Component::loop() {
       case STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER:
         this->get_body_motion_params();
         break;
-      case STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS:  // The above is the basic functional information
+      case STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS:
+        // The above is the basic functional information
         this->get_keep_away();
         break;
       case STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE:
         this->get_heartbeat_packet();
         break;
-        /*
-      case CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY:
-        this->get_existence_boundary();
-        break;
-      case CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY:
-        this->get_motion_boundary();
-        break;
-      case CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD:
-        this->get_existence_threshold();
-        break;
-      case CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD:
-        this->get_motion_threshold();
-        break;
-      case CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME:
-        this->get_motion_trigger_time();
-        break;
-      case CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME:
-        this->get_motion_to_rest_time();
-        break;
-      case CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED:
-        this->get_custom_unman_time();
-        if (this->s_output_info_switch_flag_ == OUTPUT_SWTICH_OFF) {
-        }
-        break;
-        */
       case UNDERLY_FUNCTION_QUERY_HUMAN_STATUS:
         this->get_human_status();
         break;
@@ -346,23 +318,6 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
 
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Custom stuff: %d ", data[FRAME_DATA_INDEX]);
-    /*
-    if (this->custom_spatial_static_value_sensor_ != nullptr) {
-      this->custom_spatial_static_value_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-    }
-    if (this->custom_presence_of_detection_sensor_ != nullptr) {
-      this->custom_presence_of_detection_sensor_->publish_state(data[FRAME_DATA_INDEX + 1] * 0.5f);
-    }
-    if (this->custom_spatial_motion_value_sensor_ != nullptr) {
-      this->custom_spatial_motion_value_sensor_->publish_state(data[FRAME_DATA_INDEX + 2]);
-    }
-    if (this->custom_motion_distance_sensor_ != nullptr) {
-      this->custom_motion_distance_sensor_->publish_state(data[FRAME_DATA_INDEX + 3] * 0.5f);
-    }
-    if (this->custom_motion_speed_sensor_ != nullptr) {
-      this->custom_motion_speed_sensor_->publish_state((data[FRAME_DATA_INDEX + 4] - 10) * 0.5f);
-    }
-      */
   } else if ((data[FRAME_COMMAND_WORD_INDEX] == 0x06) || (data[FRAME_COMMAND_WORD_INDEX] == 0x86)) {
     // none:0x00  close_to:0x01  far_away:0x02
     if ((this->keep_away_text_sensor_ != nullptr) && (data[FRAME_DATA_INDEX] < 3)) {
@@ -639,23 +594,6 @@ void MR24HPC1Component::set_underlying_open_function(bool enable) {
   if (this->motion_status_text_sensor_ != nullptr) {
     this->motion_status_text_sensor_->publish_state("");
   }
-  /*
-  if (this->custom_spatial_static_value_sensor_ != nullptr) {
-    this->custom_spatial_static_value_sensor_->publish_state(NAN);
-  }
-  if (this->custom_spatial_motion_value_sensor_ != nullptr) {
-    this->custom_spatial_motion_value_sensor_->publish_state(NAN);
-  }
-  if (this->custom_motion_distance_sensor_ != nullptr) {
-    this->custom_motion_distance_sensor_->publish_state(NAN);
-  }
-  if (this->custom_presence_of_detection_sensor_ != nullptr) {
-    this->custom_presence_of_detection_sensor_->publish_state(NAN);
-  }
-  if (this->custom_motion_speed_sensor_ != nullptr) {
-    this->custom_motion_speed_sensor_->publish_state(NAN);
-  }
-    */
 }
 
 void MR24HPC1Component::set_scene_mode(uint8_t value) {
@@ -691,6 +629,7 @@ void MR24HPC1Component::set_restart() {
   ESP_LOGD(TAG, "set_restart");
   this->send_query_(SET_RESTART, sizeof(SET_RESTART));
   this->check_dev_inf_sign_ = true;
+  this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
 }
 
 void MR24HPC1Component::set_unman_time(uint8_t value) {
