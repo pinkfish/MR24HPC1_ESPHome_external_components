@@ -112,6 +112,9 @@ void MR24HPC1Component::loop() {
         this->get_hardware_model();
         this->check_dev_inf_sign_ = false;
         break;
+      case STANDARD_FUNCTION_ENABLE_OPEN_MODE:
+        this->set_underlying_open_function(true);
+        break;
       case STANDARD_FUNCTION_QUERY_SCENE_MODE:
         this->get_scene_mode();
         break;
@@ -430,7 +433,6 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
       this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
     }
   } else if ((data[FRAME_COMMAND_WORD_INDEX] == 0x89)) {
-
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
   }

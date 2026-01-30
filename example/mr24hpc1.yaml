@@ -100,6 +100,7 @@ select:
   - platform: seeed_mr24hpc1
     scene_mode:
       name: "Scene"
+      restore_value: true
     existence_boundary:
       name: "Existence Boundary"
     motion_boundary:
@@ -109,11 +110,13 @@ number:
   - platform: seeed_mr24hpc1
     sensitivity:
       name: "Sensitivity"
+      restore_value: true
     existence_threshold:
       name: "Existence Energy Threshold"
     motion_threshold:
       name: "Motion Energy Threshold"
     motion_trigger:
       name: "Motion Trigger Time"
+      restore_value: true
     motion_to_rest:
       name: "Motion To Rest Time"

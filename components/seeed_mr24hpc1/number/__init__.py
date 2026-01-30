@@ -13,6 +13,7 @@ MotionThresholdNumber = mr24hpc1_ns.class_("MotionThresholdNumber", number.Numbe
 MotionTriggerTimeNumber = mr24hpc1_ns.class_("MotionTriggerTimeNumber", number.Number)
 MotionToRestTimeNumber = mr24hpc1_ns.class_("MotionToRestTimeNumber", number.Number)
 
+
 CONF_EXISTENCE_THRESHOLD = "existence_threshold"
 CONF_MOTION_THRESHOLD = "motion_threshold"
 CONF_MOTION_TRIGGER = "motion_trigger"
@@ -92,7 +93,7 @@ async def to_code(config):
         n = await number.new_number(
             motion_to_rest_config,
             min_value=0,
-            max_value=3000,
+            max_value=9,
             step=1,
         )
         await cg.register_parented(n, mr24hpc1_component)
