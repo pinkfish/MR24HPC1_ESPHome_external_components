@@ -7,12 +7,10 @@ from esphome.const import (
 from .. import CONF_MR24HPC1_ID, MR24HPC1Component, mr24hpc1_ns
 
 SceneModeSelect = mr24hpc1_ns.class_("SceneModeSelect", select.Select)
-UnmanTimeSelect = mr24hpc1_ns.class_("UnmanTimeSelect", select.Select)
 ExistenceBoundarySelect = mr24hpc1_ns.class_("ExistenceBoundarySelect", select.Select)
 MotionBoundarySelect = mr24hpc1_ns.class_("MotionBoundarySelect", select.Select)
 
 CONF_SCENE_MODE = "scene_mode"
-CONF_UNMAN_TIME = "unman_time"
 CONF_EXISTENCE_BOUNDARY = "existence_boundary"
 CONF_MOTION_BOUNDARY = "motion_boundary"
 
@@ -22,11 +20,6 @@ CONFIG_SCHEMA = {
         SceneModeSelect,
         entity_category=ENTITY_CATEGORY_CONFIG,
         icon="mdi:hoop-house",
-    ),
-    cv.Optional(CONF_UNMAN_TIME): select.select_schema(
-        UnmanTimeSelect,
-        entity_category=ENTITY_CATEGORY_CONFIG,
-        icon="mdi:timeline-clock",
     ),
     cv.Optional(CONF_EXISTENCE_BOUNDARY): select.select_schema(
         ExistenceBoundarySelect,
@@ -48,23 +41,6 @@ async def to_code(config):
         )
         await cg.register_parented(s, config[CONF_MR24HPC1_ID])
         cg.add(mr24hpc1_component.set_scene_mode_select(s))
-    if unmantime_config := config.get(CONF_UNMAN_TIME):
-        s = await select.new_select(
-            unmantime_config,
-            options=[
-                "None",
-                "10s",
-                "30s",
-                "1min",
-                "2min",
-                "5min",
-                "10min",
-                "30min",
-                "60min",
-            ],
-        )
-        await cg.register_parented(s, config[CONF_MR24HPC1_ID])
-        cg.add(mr24hpc1_component.set_unman_time_select(s))
     if existence_boundary_config := config.get(CONF_EXISTENCE_BOUNDARY):
         s = await select.new_select(
             existence_boundary_config,

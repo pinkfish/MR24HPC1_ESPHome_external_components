@@ -329,35 +329,45 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
     }
   } else if ((this->movement_signs_sensor_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x07) || (data[FRAME_COMMAND_WORD_INDEX] == 0x87))) {
+    ESP_LOGD(TAG, "Movement signs: %d ", data[FRAME_DATA_INDEX]);
     this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
   } else if ((this->existence_threshold_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
+    ESP_LOGD(TAG, "Existance threshold: %d ", data[FRAME_DATA_INDEX]);
     this->existence_threshold_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if ((this->motion_threshold_number_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x09) || (data[FRAME_COMMAND_WORD_INDEX] == 0x89))) {
+    ESP_LOGD(TAG, "Motion threshold: %d ", data[FRAME_DATA_INDEX]);
     this->motion_threshold_number_->publish_state(data[FRAME_DATA_INDEX]);
   } else if ((this->motion_boundary_select_ != nullptr) &&
              ((data[FRAME_COMMAND_WORD_INDEX] == 0x0b) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8b))) {
-    if (this->motion_boundary_select_->has_index(data[FRAME_DATA_INDEX] - 1)) {
-      this->motion_boundary_select_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX] - 1]);
-    }
-  } else if ((this->motion_trigger_number_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0c) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8c))) {
-    uint32_t motion_trigger_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
-                                                 data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
-    this->motion_trigger_number_->publish_state(motion_trigger_time);
-  } else if ((this->motion_to_rest_number_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x0d) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8d))) {
-    uint32_t move_to_rest_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
-                                               data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
-    this->motion_to_rest_number_->publish_state(move_to_rest_time);
-  } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
-    if (data[FRAME_DATA_INDEX]) {
-      this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
-    } else {
-      this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
-    }
+    ESP_LOGD(TAG, "Motion boundary index: %d ", data[FRAME_DATA_INDEX]);
+    this->motion_boundary_select_->publish_state(S_BOUNDARY_STR[data[FRAME_DATA_INDEX] - 1]);
   }
+}
+else if ((this->motion_trigger_number_ != nullptr) &&
+         ((data[FRAME_COMMAND_WORD_INDEX] == 0x0c) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8c))) {
+  ESP_LOGD(TAG, "Motion trigger time: %d %d %d %d", data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
+           data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
+  uint32_t motion_trigger_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
+                                               data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
+  this->motion_trigger_number_->publish_state(motion_trigger_time);
+}
+else if ((this->motion_to_rest_number_ != nullptr) &&
+         ((data[FRAME_COMMAND_WORD_INDEX] == 0x0d) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8d))) {
+  ESP_LOGD(TAG, "Move to rest time: %d %d %d %d", data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
+           data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
+  uint32_t move_to_rest_time = encode_uint32(data[FRAME_DATA_INDEX], data[FRAME_DATA_INDEX + 1],
+                                             data[FRAME_DATA_INDEX + 2], data[FRAME_DATA_INDEX + 3]);
+  this->motion_to_rest_number_->publish_state(move_to_rest_time);
+}
+else if (data[FRAME_COMMAND_WORD_INDEX] == 0x80) {
+  if (data[FRAME_DATA_INDEX]) {
+    this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
+  } else {
+    this->s_output_info_switch_flag_ = OUTPUT_SWTICH_OFF;
+  }
+}
 }
 
 void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
@@ -432,13 +442,12 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
     // none:0x00  1s:0x01 30s:0x02 1min:0x03 2min:0x04 5min:0x05 10min:0x06 30min:0x07 1hour:0x08
     if (data[FRAME_DATA_INDEX] < 9) {
-      // this->unman_time_select_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
     }
     ESP_LOGD(TAG, "Unman time select %d ", data[FRAME_DATA_INDEX]);
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
     // none:0x00  close_to:0x01  far_away:0x02
     if (data[FRAME_DATA_INDEX] < 3) {
-      // this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
+      this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
     }
     ESP_LOGD(TAG, "Keep Away sensor %d ", data[FRAME_DATA_INDEX]);
   } else {
