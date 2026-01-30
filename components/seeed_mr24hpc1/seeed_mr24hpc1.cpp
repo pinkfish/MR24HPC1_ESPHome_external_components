@@ -101,13 +101,14 @@ void MR24HPC1Component::loop() {
         this->get_product_id();
         break;
       case STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION:
-        this->get_product_mode();
-        this->get_product_id();
+        // this->get_product_mode();
+        // this->get_product_id();
         this->get_firmware_version();
         break;
-      case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:  // Above is the equipment information
-        this->get_product_mode();
-        this->get_product_id();
+      case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:  
+      // Above is the equipment information
+                                                   //  this->get_product_mode();
+                                                   // this->get_product_id();
         this->get_hardware_model();
         this->check_dev_inf_sign_ = false;
         break;
