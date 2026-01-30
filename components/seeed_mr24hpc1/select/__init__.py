@@ -7,12 +7,10 @@ from esphome.const import (
 from .. import CONF_MR24HPC1_ID, MR24HPC1Component, mr24hpc1_ns
 
 SceneModeSelect = mr24hpc1_ns.class_("SceneModeSelect", select.Select)
-ExistenceBoundarySelect = mr24hpc1_ns.class_("ExistenceBoundarySelect", select.Select)
-MotionBoundarySelect = mr24hpc1_ns.class_("MotionBoundarySelect", select.Select)
+MotionTimeoutSelect = mr24hpc1_ns.class_("MotionTimeoutSelect", select.Select)
 
 CONF_SCENE_MODE = "scene_mode"
-CONF_EXISTENCE_BOUNDARY = "existence_boundary"
-CONF_MOTION_BOUNDARY = "motion_boundary"
+CONF_MOTION_TIMEOUT = "motion_timeout"
 
 CONFIG_SCHEMA = {
     cv.GenerateID(CONF_MR24HPC1_ID): cv.use_id(MR24HPC1Component),
@@ -21,13 +19,10 @@ CONFIG_SCHEMA = {
         entity_category=ENTITY_CATEGORY_CONFIG,
         icon="mdi:hoop-house",
     ),
-    cv.Optional(CONF_EXISTENCE_BOUNDARY): select.select_schema(
-        ExistenceBoundarySelect,
+    cv.Optional(CONF_MOTION_TIMEOUT): select.select_schema(
+        MotionTimeoutSelect,
         entity_category=ENTITY_CATEGORY_CONFIG,
-    ),
-    cv.Optional(CONF_MOTION_BOUNDARY): select.select_schema(
-        MotionBoundarySelect,
-        entity_category=ENTITY_CATEGORY_CONFIG,
+        icon="mdi:human-greeting-variant",
     ),
 }
 
@@ -41,39 +36,20 @@ async def to_code(config):
         )
         await cg.register_parented(s, config[CONF_MR24HPC1_ID])
         cg.add(mr24hpc1_component.set_scene_mode_select(s))
-    if existence_boundary_config := config.get(CONF_EXISTENCE_BOUNDARY):
+    if motiontimeout_config := config.get(CONF_MOTION_TIMEOUT):
         s = await select.new_select(
-            existence_boundary_config,
+            motiontimeout_config,
             options=[
-                "0.5m",
-                "1.0m",
-                "1.5m",
-                "2.0m",
-                "2.5m",
-                "3.0m",
-                "3.5m",
-                "4.0m",
-                "4.5m",
-                "5.0m",
+                "None",
+                "10s",
+                "30s",
+                "1min",
+                "2min",
+                "5min",
+                "10min",
+                "30min",
+                "60min",
             ],
         )
         await cg.register_parented(s, config[CONF_MR24HPC1_ID])
-        cg.add(mr24hpc1_component.set_existence_boundary_select(s))
-    if motion_boundary_config := config.get(CONF_MOTION_BOUNDARY):
-        s = await select.new_select(
-            motion_boundary_config,
-            options=[
-                "0.5m",
-                "1.0m",
-                "1.5m",
-                "2.0m",
-                "2.5m",
-                "3.0m",
-                "3.5m",
-                "4.0m",
-                "4.5m",
-                "5.0m",
-            ],
-        )
-        await cg.register_parented(s, config[CONF_MR24HPC1_ID])
-        cg.add(mr24hpc1_component.set_motion_boundary_select(s))
+        cg.add(mr24hpc1_component.motiontimeout_config(s))

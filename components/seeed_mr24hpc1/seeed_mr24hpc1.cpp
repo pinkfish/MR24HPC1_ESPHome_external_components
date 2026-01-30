@@ -37,7 +37,7 @@ void MR24HPC1Component::dump_config() {
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
 #endif
 #ifdef USE_SELECT
-  LOG_SELECT(" ", "Motion Boundary Select", this->motion_boundary_select_);
+  LOG_SELECT(" ", "Presence Timeout Select", this->motion_timeout_select);
   LOG_SELECT(" ", "Scene Mode Select", this->scene_mode_select_);
 #endif
 #ifdef USE_NUMBER
@@ -475,10 +475,10 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
     }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
     // none:0x00  1s:0x01 30s:0x02 1min:0x03 2min:0x04 5min:0x05 10min:0x06 30min:0x07 1hour:0x08
-    ESP_LOGD(TAG, "Motion trigger time select %d %p", data[FRAME_DATA_INDEX], this->motion_trigger_number_);
+    ESP_LOGD(TAG, "Motion timeout select %d %p", data[FRAME_DATA_INDEX], this->motion_timeout_select_);
     if (data[FRAME_DATA_INDEX] < 9) {
-      if (this->motion_trigger_number_ != nullptr) {
-        this->motion_trigger_number_->publish_state(data[FRAME_DATA_INDEX]);
+      if (this->motion_timeout_select_ != nullptr) {
+        this->motion_timeout_select_->publish_state(S_UNMANNED_TIME_STR[data[FRAME_DATA_INDEX]]);
       }
     }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {

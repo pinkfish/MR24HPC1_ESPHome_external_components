@@ -4,8 +4,8 @@ import esphome.config_validation as cv
 from esphome.const import (
     DEVICE_CLASS_DISTANCE,
     DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_SPEED,
     UNIT_METER,
+    UNIT_WATT_HOUR,
 )
 from . import CONF_MR24HPC1_ID, MR24HPC1Component
 
@@ -24,7 +24,6 @@ CONFIG_SCHEMA = cv.Schema(
         ),
         cv.Optional(CONF_EXISTENCE_ENERGY): sensor.sensor_schema(
             device_class=DEVICE_CLASS_ENERGY,
-            unit_of_measurement="Wh",
         ),
         cv.Optional(CONF_MOTION_ENERGY): sensor.sensor_schema(
             device_class=DEVICE_CLASS_ENERGY,

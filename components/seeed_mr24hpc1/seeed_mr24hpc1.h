@@ -119,6 +119,7 @@ class MR24HPC1Component : public Component,
   SUB_SELECT(unman_time)
   SUB_SELECT(existence_boundary)
   SUB_SELECT(motion_boundary)
+  SUB_SELECT(motion_timeout)
 #endif
 #ifdef USE_NUMBER
   SUB_NUMBER(sensitivity)
