@@ -21,8 +21,6 @@ void MR24HPC1Component::dump_config() {
   LOG_TEXT_SENSOR(" ", "Firware Verison Text Sensor", this->firware_version_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Keep Away Text Sensor", this->keep_away_text_sensor_);
   LOG_TEXT_SENSOR(" ", "Motion Status Text Sensor", this->motion_status_text_sensor_);
-  LOG_TEXT_SENSOR(" ", "Static Distance Sensor", this->static_distance_sensor_);
-  LOG_TEXT_SENSOR(" ", "Motion Distance Sensor", this->motion_distance_sensor_);
 #endif
 #ifdef USE_BINARY_SENSOR
   LOG_BINARY_SENSOR(" ", "Has Target Binary Sensor", this->has_target_binary_sensor_);
@@ -32,6 +30,8 @@ void MR24HPC1Component::dump_config() {
   LOG_SENSOR(" ", "Existance Energy Sensor", this->existence_energy_sensor_);
   LOG_SENSOR(" ", "Motion Energy Sensor", this->motion_energy_sensor_);
   LOG_SENSOR(" ", "Motion Speed Sensor", this->motion_speed_sensor_);
+  LOG_SENSOR(" ", "Static Distance Sensor", this->static_distance_sensor_);
+  LOG_SENSOR(" ", "Motion Distance Sensor", this->motion_distance_sensor_);
 #endif
 #ifdef USE_BUTTON
   LOG_BUTTON(" ", "Restart Button", this->restart_button_);
