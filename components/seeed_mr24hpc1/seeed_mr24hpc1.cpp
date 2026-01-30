@@ -444,22 +444,26 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
     if (data[FRAME_DATA_INDEX] < 3) {
       this->motion_status_text_sensor_->publish_state(S_MOTION_STATUS_STR[data[FRAME_DATA_INDEX]]);
     }
-    ESP_LOGD(TAG, "Motion sensor state %d ", data[FRAME_DATA_INDEX]);
-  } else if ((this->movement_signs_sensor_ != nullptr) &&
-             ((data[FRAME_COMMAND_WORD_INDEX] == 0x03) || (data[FRAME_COMMAND_WORD_INDEX] == 0x83))) {
-    this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
-    ESP_LOGD(TAG, "Movement signs sensor state %d ", data[FRAME_DATA_INDEX]);
+    ESP_LOGD(TAG, "Motion sensor state %d %p", data[FRAME_DATA_INDEX], this->motion_status_text_sensor_);
+  } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x03) || (data[FRAME_COMMAND_WORD_INDEX] == 0x83))) {
+    ESP_LOGD(TAG, "Movement signs sensor state %d %p ", data[FRAME_DATA_INDEX], this->movement_signs_sensor_);
+    if (this->movement_signs_sensor_ != nullptr) {
+      this->movement_signs_sensor_->publish_state(data[FRAME_DATA_INDEX]);
+    }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0A) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8A))) {
     // none:0x00  1s:0x01 30s:0x02 1min:0x03 2min:0x04 5min:0x05 10min:0x06 30min:0x07 1hour:0x08
+    ESP_LOGD(TAG, "Motion trigger time select %d %p", data[FRAME_DATA_INDEX], this->motion_trigger_number_);
     if (data[FRAME_DATA_INDEX] < 9) {
+      if (this->motion_trigger_number_ != nullptr) {
+        this->motion_trigger_number_->publish_state(motion_trigger_time);
+      }
     }
-    ESP_LOGD(TAG, "Unman time select %d ", data[FRAME_DATA_INDEX]);
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x0B) || (data[FRAME_COMMAND_WORD_INDEX] == 0x8B))) {
     // none:0x00  close_to:0x01  far_away:0x02
-    if (data[FRAME_DATA_INDEX] < 3) {
+    if (data[FRAME_DATA_INDEX] < 3 && this->keep_away_text_sensor_ != nullptr) {
       this->keep_away_text_sensor_->publish_state(S_KEEP_AWAY_STR[data[FRAME_DATA_INDEX]]);
     }
-    ESP_LOGD(TAG, "Keep Away sensor %d ", data[FRAME_DATA_INDEX]);
+    ESP_LOGD(TAG, "Keep Away sensor %d %p", data[FRAME_DATA_INDEX], this->keep_away_text_sensor_);
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
   }
