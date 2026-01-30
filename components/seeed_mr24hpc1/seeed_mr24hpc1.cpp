@@ -102,115 +102,91 @@ void MR24HPC1Component::loop() {
     switch (this->sg_start_query_data_) {
       case STANDARD_FUNCTION_QUERY_PRODUCT_MODE:
         this->get_product_mode();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_ID;
         break;
       case STANDARD_FUNCTION_QUERY_PRODUCT_ID:
         this->get_product_id();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION;
         break;
       case STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION:
         this->get_product_mode();
         this->get_product_id();
         this->get_firmware_version();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HARDWARE_MODE;
         break;
       case STANDARD_FUNCTION_QUERY_HARDWARE_MODE:  // Above is the equipment information
         this->get_product_mode();
         this->get_product_id();
         this->get_hardware_model();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_SCENE_MODE;
         this->check_dev_inf_sign_ = false;
         break;
       case STANDARD_FUNCTION_QUERY_SCENE_MODE:
         this->get_scene_mode();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_SENSITIVITY;
         break;
       case STANDARD_FUNCTION_QUERY_SENSITIVITY:
         this->get_sensitivity();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_UNMANNED_TIME;
         break;
       case STANDARD_FUNCTION_QUERY_UNMANNED_TIME:
         this->get_unmanned_time();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HUMAN_STATUS;
         break;
       case STANDARD_FUNCTION_QUERY_HUMAN_STATUS:
         this->get_human_status();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HUMAN_MOTION_INF;
         break;
       case STANDARD_FUNCTION_QUERY_HUMAN_MOTION_INF:
         this->get_human_motion_info();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER;
         break;
       case STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER:
         this->get_body_motion_params();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
         break;
       case STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS:  // The above is the basic functional information
         this->get_keep_away();
-        this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE;
         break;
       case STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE:
         this->get_heartbeat_packet();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY;
         break;
       case CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY:
         this->get_existence_boundary();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY:
         this->get_motion_boundary();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD;
         break;
       case CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD:
         this->get_existence_threshold();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD:
         this->get_motion_threshold();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME:
         this->get_motion_trigger_time();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME;
         break;
       case CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME:
         this->get_motion_to_rest_time();
-        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED;
         break;
       case CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED:
         this->get_custom_unman_time();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_HUMAN_STATUS;
         if (this->s_output_info_switch_flag_ == OUTPUT_SWTICH_OFF) {
         }
         break;
       case UNDERLY_FUNCTION_QUERY_HUMAN_STATUS:
         this->get_human_status();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE;
         break;
       case UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE:
         this->get_spatial_static_value();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_SPATIAL_MOTION_VALUE;
         break;
       case UNDERLY_FUNCTION_QUERY_SPATIAL_MOTION_VALUE:
         this->get_spatial_motion_value();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_DISTANCE_OF_STATIC_OBJECT;
         break;
       case UNDERLY_FUNCTION_QUERY_DISTANCE_OF_STATIC_OBJECT:
         this->get_distance_of_static_object();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_DISTANCE_OF_MOVING_OBJECT;
         break;
       case UNDERLY_FUNCTION_QUERY_DISTANCE_OF_MOVING_OBJECT:
         this->get_distance_of_moving_object();
-        this->sg_start_query_data_ = UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED;
         break;
       case UNDERLY_FUNCTION_QUERY_TARGET_MOVEMENT_SPEED:
         this->get_target_movement_speed();
-        // this->sg_start_query_data_++;
-        this->poll_time_base_func_check_ = false;  // Avoiding high-speed polling that can cause the device to jam
+        this->sg_start_query_data_ = CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED;
         break;
       default:
         break;
     }
+    this->sg_start_query_data_++;
   }
 }
 
