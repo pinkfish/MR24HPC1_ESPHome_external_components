@@ -58,16 +58,7 @@ enum PollingState {
   STANDARD_FUNCTION_QUERY_HUMAN_MOTION_INF,
   STANDARD_FUNCTION_QUERY_BODY_MOVE_PARAMETER,
   STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS,
-  STANDARD_QUERY_CUSTOM_MODE,
   STANDARD_FUNCTION_QUERY_HEARTBEAT_STATE,  // Above is the basic function
-
-  CUSTOM_FUNCTION_QUERY_EXISTENCE_BOUNDARY,
-  CUSTOM_FUNCTION_QUERY_MOTION_BOUNDARY,
-  CUSTOM_FUNCTION_QUERY_EXISTENCE_THRESHOLD,
-  CUSTOM_FUNCTION_QUERY_MOTION_THRESHOLD,
-  CUSTOM_FUNCTION_QUERY_MOTION_TRIGGER_TIME,
-  CUSTOM_FUNCTION_QUERY_MOTION_TO_REST_TIME,
-  CUSTOM_FUNCTION_QUERY_TIME_OF_ENTER_UNMANNED,
 
   UNDERLY_FUNCTION_QUERY_HUMAN_STATUS,
   UNDERLY_FUNCTION_QUERY_SPATIAL_STATIC_VALUE,
@@ -103,26 +94,18 @@ class MR24HPC1Component : public Component,
   SUB_TEXT_SENSOR(firware_version)
   SUB_TEXT_SENSOR(keep_away)
   SUB_TEXT_SENSOR(motion_status)
-  SUB_TEXT_SENSOR(custom_mode_end)
 #endif
 #ifdef USE_BINARY_SENSOR
   SUB_BINARY_SENSOR(has_target)
 #endif
 #ifdef USE_SENSOR
-  SUB_SENSOR(custom_presence_of_detection)
   SUB_SENSOR(movement_signs)
-  SUB_SENSOR(custom_motion_distance)
-  SUB_SENSOR(custom_spatial_static_value)
-  SUB_SENSOR(custom_spatial_motion_value)
-  SUB_SENSOR(custom_motion_speed)
-  SUB_SENSOR(custom_mode_num)
 #endif
 #ifdef USE_SWITCH
   SUB_SWITCH(underlying_open_function)
 #endif
 #ifdef USE_BUTTON
   SUB_BUTTON(restart)
-  SUB_BUTTON(custom_set_end)
 #endif
 #ifdef USE_SELECT
   SUB_SELECT(scene_mode)
@@ -132,12 +115,10 @@ class MR24HPC1Component : public Component,
 #endif
 #ifdef USE_NUMBER
   SUB_NUMBER(sensitivity)
-  SUB_NUMBER(custom_mode)
   SUB_NUMBER(existence_threshold)
   SUB_NUMBER(motion_threshold)
   SUB_NUMBER(motion_trigger)
   SUB_NUMBER(motion_to_rest)
-  SUB_NUMBER(custom_unman_time)
 #endif
 
  protected:
