@@ -410,6 +410,7 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
     }
   } else if (((data[FRAME_COMMAND_WORD_INDEX] == 0x08) || (data[FRAME_COMMAND_WORD_INDEX] == 0x88))) {
     // 1-3
+    ESP_LOGD(TAG, "Reply: get sensitivity 0x%02X", data[FRAME_DATA_INDEX]);
     if (this->sensitivity_number_ != nullptr) {
       this->sensitivity_number_->publish_state(data[FRAME_DATA_INDEX]);
     }
@@ -419,6 +420,9 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x87) {
     ESP_LOGD(TAG, "Select has index offset %d ", data[FRAME_DATA_INDEX]);
+    if ((this->scene_mode_select_ != nullptr) && (this->scene_mode_select_->has_index(data[FRAME_DATA_INDEX]))) {
+      this->scene_mode_select_->publish_state(S_SCENE_STR[data[FRAME_DATA_INDEX]]);
+    }
   } else {
     ESP_LOGD(TAG, "[%s] No found COMMAND_WORD(%02X) in Frame", __FUNCTION__, data[FRAME_COMMAND_WORD_INDEX]);
   }
