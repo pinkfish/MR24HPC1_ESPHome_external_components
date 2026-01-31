@@ -764,21 +764,11 @@ void MR24HPC1Component::set_custom_unman_time(uint16_t value) {
   this->get_custom_unman_time();
 }
 
-
 void MR24HPC1Component::set_custom_end_mode() {
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x0a, 0x00, 0x01, 0x0F, 0xCB, 0x54, 0x43};
   this->send_query_(send_data, send_data_len);
-  this->get_existence_boundary();
-  this->get_motion_boundary();
-  this->get_existence_threshold();
-  this->get_motion_threshold();
-  this->get_motion_trigger_time();
-  this->get_motion_to_rest_time();
-  this->get_custom_unman_time();
-  this->get_custom_mode();
-  this->get_scene_mode();
-  this->get_sensitivity();
+  this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
 
 }  // namespace seeed_mr24hpc1
