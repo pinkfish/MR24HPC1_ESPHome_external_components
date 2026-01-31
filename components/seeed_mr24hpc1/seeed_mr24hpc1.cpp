@@ -768,7 +768,6 @@ void MR24HPC1Component::set_custom_end_mode() {
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x0a, 0x00, 0x01, 0x0F, 0xCB, 0x54, 0x43};
   this->send_query_(send_data, send_data_len);
-  this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
 
 }  // namespace seeed_mr24hpc1
