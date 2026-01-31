@@ -52,4 +52,4 @@ async def to_code(config):
             ],
         )
         await cg.register_parented(s, config[CONF_MR24HPC1_ID])
-        cg.add(mr24hpc1_component.motiontimeout_config(s))
+        cg.add(mr24hpc1_component.set_motion_timeout_select(s))
