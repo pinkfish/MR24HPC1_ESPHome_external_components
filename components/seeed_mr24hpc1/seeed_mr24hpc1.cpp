@@ -107,7 +107,7 @@ void MR24HPC1Component::loop() {
         this->get_product_mode();
         break;
       case STANDARD_FUNCTION_ENABLE_STANDARD_MODE:
-        this->set_custom_end_mode(0x00);
+        this->set_custom_end_mode();
         break;
       case STANDARD_FUNCTION_QUERY_PRODUCT_ID:
         this->get_product_id();

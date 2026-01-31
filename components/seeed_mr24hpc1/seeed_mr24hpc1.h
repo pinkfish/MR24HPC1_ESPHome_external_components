@@ -192,7 +192,6 @@ class MR24HPC1Component : public Component,
   void set_sensitivity(uint8_t value);
   void set_restart();
   void set_unman_time(uint8_t value);
-  void set_custom_mode(uint8_t mode);
   void set_custom_end_mode();
   void set_existence_boundary(uint8_t value);
   void set_motion_boundary(uint8_t value);
