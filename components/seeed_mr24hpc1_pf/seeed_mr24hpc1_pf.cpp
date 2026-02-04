@@ -114,7 +114,7 @@ void MR24HPC1PFComponent::restore_device_state_() {
     // Update the stats.
     set_scene_mode(state.scene_mode);
     set_sensitivity(state.sensitivity);
-    set_motion_timeout(state.motion_timeout);
+    set_unman_time(state.motion_timeout);
   } else {
     ESP_LOGD(TAG, "No MMWave device state in preferences");
   }
