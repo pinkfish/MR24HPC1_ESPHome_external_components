@@ -55,7 +55,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v7.0.0
         with:
           name: firmware
           path: firmware
@@ -65,12 +65,12 @@ jobs:
           mkdir -p output/firmware
           cp -r firmware/${{ needs.build-firmware.outputs.version }}/* output/firmware/
 
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v7.0.0
         with:
           name: site
           path: output
 
-      - uses: actions/upload-pages-artifact@v3.0.1
+      - uses: actions/upload-pages-artifact@v4.0.0
         with:
           path: output
           retention-days: 1
