@@ -77,7 +77,7 @@ text_sensor:
     hardware_version:
       name: "Hardware Version"
     keep_away:
-      name: "Active Reporting Of Proximity"
+      name: "Current Proximity"
     motion_status:
       name: "Motion Information"
 
@@ -85,19 +85,22 @@ binary_sensor:
   - platform: seeed_mr24hpc1
     has_target:
       name: "Presence Information"
+      device_class: occupancy
 
 sensor:
   - platform: seeed_mr24hpc1
     movement_signs:
       name: "Body Movement Parameter"
-    motion_distance:
-      name: "Motion Distance"
-    existance_energy:
+    existence_energy:
       name: "Existence Energy"
-    spatial_motion_value:
+    motion_energy:
       name: "Motion Energy"
     motion_speed:
       name: "Motion Speed"
+    motion_distance:
+      name: "Motion Distance"
+    static_distance:
+      name: "Static Distance"
 
 button:
   - platform: seeed_mr24hpc1
@@ -108,23 +111,10 @@ select:
   - platform: seeed_mr24hpc1
     scene_mode:
       name: "Scene"
-      restore_value: true
-    existence_boundary:
-      name: "Existence Boundary"
-    motion_boundary:
-      name: "Motion Boundary"
+    motion_timeout:
+      name: "Presence timeout"
 
 number:
   - platform: seeed_mr24hpc1
     sensitivity:
       name: "Sensitivity"
-      restore_value: true
-    existence_threshold:
-      name: "Existence Energy Threshold"
-    motion_threshold:
-      name: "Motion Energy Threshold"
-    motion_trigger:
-      name: "Motion Trigger Time"
-      restore_value: true
-    motion_to_rest:
-      name: "Motion To Rest Time"
