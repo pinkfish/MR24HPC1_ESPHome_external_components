@@ -22,7 +22,8 @@ esphome:
 
 external_components:
   - source:
-      path: /components
+      type: local
+      path: components
 
 esp32:
   board: esp32-c3-devkitm-1
