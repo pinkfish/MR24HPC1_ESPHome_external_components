@@ -5,18 +5,18 @@ from esphome.const import (
     DEVICE_CLASS_SWITCH,
     ENTITY_CATEGORY_CONFIG,
 )
-from .. import CONF_MR24HPC1_ID, MR24HPC1Component, mr24hpc1_ns
+from .. import CONF_MR24HPC1PF_ID, MR24HPC1PFComponent, mr24hpc1pf_ns
 
-UnderlyingOpenFuncSwitch = mr24hpc1_ns.class_(
+UnderlyingOpenFuncSwitch = mr24hpc1pf_ns.class_(
     "UnderlyOpenFunctionSwitch", switch.Switch
 )
 
 CONF_UNDERLYING_OPEN_FUNCTION = "underlying_open_function"
 
 CONFIG_SCHEMA = {
-    cv.GenerateID(CONF_MR24HPC1_ID): cv.use_id(MR24HPC1Component),
+    cv.GenerateID(CONF_MR24HPC1PF_ID): cv.use_id(MR24HPC1PFComponent),
 }
 
 
 async def to_code(config):
-    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1_ID])
+    mr24hpc1pf_component = await cg.get_variable(config[CONF_MR24HPC1PF_ID])

@@ -1,17 +1,17 @@
-#include "seeed_mr24hpc1.h"
+#include "seeed_mr24hpc1pf.h"
 
 #include "esphome/core/log.h"
 
 #include <utility>
 
 namespace esphome {
-namespace seeed_mr24hpc1 {
+namespace seeed_mr24hpc1pf {
 
 static const char *const TAG = "seeed_mr24hpc1_pf";
 
 // Prints the component's configuration data. dump_config() prints all of the component's configuration
 // items in an easy-to-read format, including the configuration key-value pairs.
-void MR24HPC1Component::dump_config() {
+void MR24HPC1PFComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "MR24HPC1:");
 #ifdef USE_TEXT_SENSOR
   LOG_TEXT_SENSOR(" ", "Heartbeat Text Sensor", this->heartbeat_state_text_sensor_);
@@ -50,7 +50,7 @@ void MR24HPC1Component::dump_config() {
 }
 
 // Initialisation functions
-void MR24HPC1Component::setup() {
+void MR24HPC1PFComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MR24HPC1...");
   this->check_uart_settings(115200);
 
@@ -82,7 +82,7 @@ void MR24HPC1Component::setup() {
 }
 
 // Timed polling of radar data
-void MR24HPC1Component::periodic_poll_() {
+void MR24HPC1PFComponent::periodic_poll_() {
   this->get_radar_output_information_switch();  // Query the key status every so often
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
@@ -91,7 +91,7 @@ void MR24HPC1Component::periodic_poll_() {
 static const uint32_t RESTORE_STATE_VERSION = 0x848EA6ADUL;
 
 // Save the state out to flash
-void MR24HPC1Component::save_device_state_() {
+void MR24HPC1PFComponent::save_device_state_() {
   if (this->sg_start_query_data_ >= STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS) {
     ESP_LOGD(TAG, "Saving MMWave device state to preferences");
     MMWaveDeviceRestoreState state = {};
@@ -106,7 +106,7 @@ void MR24HPC1Component::save_device_state_() {
   }
 }
 
-void MR24HPC1Component::restore_device_state_() {
+void MR24HPC1PFComponent::restore_device_state_() {
   MMWaveDeviceRestoreState state;
   if (this->rtc_.load(&state)) {
     ESP_LOGD(TAG, "Restored MMWave device state from preferences");
@@ -120,7 +120,7 @@ void MR24HPC1Component::restore_device_state_() {
 }
 
 // main loop
-void MR24HPC1Component::loop() {
+void MR24HPC1PFComponent::loop() {
   uint8_t byte;
 
   // Is there data on the serial port
@@ -227,7 +227,7 @@ static int get_frame_check_status(uint8_t *data, int len) {
 }
 
 // split data frame
-void MR24HPC1Component::r24_split_data_frame_(uint8_t value) {
+void MR24HPC1PFComponent::r24_split_data_frame_(uint8_t value) {
   switch (this->sg_recv_data_state_) {
     case FRAME_IDLE:  // starting value
       if (FRAME_HEADER1_VALUE == value) {
@@ -321,7 +321,7 @@ void MR24HPC1Component::r24_split_data_frame_(uint8_t value) {
 }
 
 // Parses data frames related to product information
-void MR24HPC1Component::r24_frame_parse_product_information_(uint8_t *data) {
+void MR24HPC1PFComponent::r24_frame_parse_product_information_(uint8_t *data) {
   uint16_t product_len = encode_uint16(data[FRAME_COMMAND_WORD_INDEX + 1], data[FRAME_COMMAND_WORD_INDEX + 2]);
   if (data[FRAME_COMMAND_WORD_INDEX] == COMMAND_PRODUCT_MODE) {
     if ((this->product_model_text_sensor_ != nullptr) && (product_len < PRODUCT_BUF_MAX_SIZE)) {
@@ -360,7 +360,7 @@ void MR24HPC1Component::r24_frame_parse_product_information_(uint8_t *data) {
 }
 
 // Parsing the underlying open parameters
-void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *data) {
+void MR24HPC1PFComponent::r24_frame_parse_open_underlying_information_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x00) {
     if (data[FRAME_DATA_INDEX]) {
       this->s_output_info_switch_flag_ = OUTPUT_SWITCH_ON;
@@ -433,7 +433,7 @@ void MR24HPC1Component::r24_frame_parse_open_underlying_information_(uint8_t *da
   }
 }
 
-void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
+void MR24HPC1PFComponent::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
   switch (data[FRAME_CONTROL_WORD_INDEX]) {
     case 0x01: {
       if ((this->heartbeat_state_text_sensor_ != nullptr) && (data[FRAME_COMMAND_WORD_INDEX] == 0x01)) {
@@ -462,7 +462,7 @@ void MR24HPC1Component::r24_parse_data_frame_(uint8_t *data, uint8_t len) {
   }
 }
 
-void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
+void MR24HPC1PFComponent::r24_frame_parse_work_status_(uint8_t *data) {
   if (data[FRAME_COMMAND_WORD_INDEX] == 0x01) {
     ESP_LOGD(TAG, "Reply: get radar init status 0x%02X", data[FRAME_DATA_INDEX]);
   } else if (data[FRAME_COMMAND_WORD_INDEX] == 0x07) {
@@ -497,7 +497,7 @@ void MR24HPC1Component::r24_frame_parse_work_status_(uint8_t *data) {
   }
 }
 
-void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
+void MR24HPC1PFComponent::r24_frame_parse_human_information_(uint8_t *data) {
   if ((this->has_target_binary_sensor_ != nullptr) &&
       ((data[FRAME_COMMAND_WORD_INDEX] == 0x01) || (data[FRAME_COMMAND_WORD_INDEX] == 0x81))) {
     this->has_target_binary_sensor_->publish_state(S_SOMEONE_EXISTS_STR[data[FRAME_DATA_INDEX]]);
@@ -533,145 +533,145 @@ void MR24HPC1Component::r24_frame_parse_human_information_(uint8_t *data) {
 }
 
 // Sending data frames
-void MR24HPC1Component::send_query_(const uint8_t *query, size_t string_length) {
+void MR24HPC1PFComponent::send_query_(const uint8_t *query, size_t string_length) {
   this->write_array(query, string_length);
 }
 
 // Send Heartbeat Packet Command
-void MR24HPC1Component::get_heartbeat_packet() {
+void MR24HPC1PFComponent::get_heartbeat_packet() {
   ESP_LOGD(TAG, "get_heartbeat_packet");
   this->send_query_(GET_HEARTBEAT, sizeof(GET_HEARTBEAT));
 }
 
 // Issuance of the underlying open parameter query command
-void MR24HPC1Component::get_radar_output_information_switch() {
+void MR24HPC1PFComponent::get_radar_output_information_switch() {
   ESP_LOGD(TAG, "get_radar_output_information_switch");
   this->send_query_(GET_RADAR_OUTPUT_INFORMATION_SWITCH, sizeof(GET_RADAR_OUTPUT_INFORMATION_SWITCH));
 }
 
 // Issuance of product model orders
-void MR24HPC1Component::get_product_mode() {
+void MR24HPC1PFComponent::get_product_mode() {
   ESP_LOGD(TAG, "get_product_mode");
   this->send_query_(GET_PRODUCT_MODE, sizeof(GET_PRODUCT_MODE));
 }
 
 // Issuing the Get Product ID command
-void MR24HPC1Component::get_product_id() {
+void MR24HPC1PFComponent::get_product_id() {
   ESP_LOGD(TAG, "get_product_id");
   this->send_query_(GET_PRODUCT_ID, sizeof(GET_PRODUCT_ID));
 }
 
 // Issuing hardware model commands
-void MR24HPC1Component::get_hardware_model() {
+void MR24HPC1PFComponent::get_hardware_model() {
   ESP_LOGD(TAG, "get_hardware_model");
   this->send_query_(GET_HARDWARE_MODEL, sizeof(GET_HARDWARE_MODEL));
 }
 
 // Issuing software version commands
-void MR24HPC1Component::get_firmware_version() {
+void MR24HPC1PFComponent::get_firmware_version() {
   ESP_LOGD(TAG, "get_firmware_version");
   this->send_query_(GET_FIRMWARE_VERSION, sizeof(GET_FIRMWARE_VERSION));
 }
 
-void MR24HPC1Component::get_human_status() {
+void MR24HPC1PFComponent::get_human_status() {
   ESP_LOGD(TAG, "get_human_status");
   this->send_query_(GET_HUMAN_STATUS, sizeof(GET_HUMAN_STATUS));
 }
 
-void MR24HPC1Component::get_human_motion_info() {
+void MR24HPC1PFComponent::get_human_motion_info() {
   ESP_LOGD(TAG, "get_human_motion_info");
 
   this->send_query_(GET_HUMAN_MOTION_INFORMATION, sizeof(GET_HUMAN_MOTION_INFORMATION));
 }
 
-void MR24HPC1Component::get_body_motion_params() {
+void MR24HPC1PFComponent::get_body_motion_params() {
   ESP_LOGD(TAG, "get_body_motion_params");
   this->send_query_(GET_BODY_MOTION_PARAMETERS, sizeof(GET_BODY_MOTION_PARAMETERS));
 }
 
-void MR24HPC1Component::get_keep_away() {
+void MR24HPC1PFComponent::get_keep_away() {
   ESP_LOGD(TAG, "get_keep_away");
   this->send_query_(GET_KEEP_AWAY, sizeof(GET_KEEP_AWAY));
 }
 
-void MR24HPC1Component::get_scene_mode() {
+void MR24HPC1PFComponent::get_scene_mode() {
   ESP_LOGD(TAG, "get_scene_mode");
   this->send_query_(GET_SCENE_MODE, sizeof(GET_SCENE_MODE));
 }
 
-void MR24HPC1Component::get_sensitivity() {
+void MR24HPC1PFComponent::get_sensitivity() {
   ESP_LOGD(TAG, "get_sensitivity");
   this->send_query_(GET_SENSITIVITY, sizeof(GET_SENSITIVITY));
 }
 
-void MR24HPC1Component::get_unmanned_time() {
+void MR24HPC1PFComponent::get_unmanned_time() {
   ESP_LOGD(TAG, "get_unmanned_time");
   this->send_query_(GET_UNMANNED_TIME, sizeof(GET_UNMANNED_TIME));
 }
 
-void MR24HPC1Component::get_existence_boundary() {
+void MR24HPC1PFComponent::get_existence_boundary() {
   ESP_LOGD(TAG, "get_existence_boundary");
   this->send_query_(GET_EXISTENCE_BOUNDARY, sizeof(GET_EXISTENCE_BOUNDARY));
 }
 
-void MR24HPC1Component::get_motion_boundary() {
+void MR24HPC1PFComponent::get_motion_boundary() {
   ESP_LOGD(TAG, "get_motion_boundary");
   this->send_query_(GET_MOTION_BOUNDARY, sizeof(GET_MOTION_BOUNDARY));
 }
 
-void MR24HPC1Component::get_spatial_static_value() {
+void MR24HPC1PFComponent::get_spatial_static_value() {
   ESP_LOGD(TAG, "get_spatial_static_value");
   this->send_query_(GET_SPATIAL_STATIC_VALUE, sizeof(GET_SPATIAL_STATIC_VALUE));
 }
 
-void MR24HPC1Component::get_spatial_motion_value() {
+void MR24HPC1PFComponent::get_spatial_motion_value() {
   ESP_LOGD(TAG, "get_spatial_motion_value");
   this->send_query_(GET_SPATIAL_MOTION_VALUE, sizeof(GET_SPATIAL_MOTION_VALUE));
 }
 
-void MR24HPC1Component::get_distance_of_static_object() {
+void MR24HPC1PFComponent::get_distance_of_static_object() {
   ESP_LOGD(TAG, "get_distance_of_static_object");
   this->send_query_(GET_DISTANCE_OF_STATIC_OBJECT, sizeof(GET_DISTANCE_OF_STATIC_OBJECT));
 }
 
-void MR24HPC1Component::get_distance_of_moving_object() {
+void MR24HPC1PFComponent::get_distance_of_moving_object() {
   ESP_LOGD(TAG, "get_distance_of_moving_object");
   this->send_query_(GET_DISTANCE_OF_MOVING_OBJECT, sizeof(GET_DISTANCE_OF_MOVING_OBJECT));
 }
 
-void MR24HPC1Component::get_target_movement_speed() {
+void MR24HPC1PFComponent::get_target_movement_speed() {
   ESP_LOGD(TAG, "get_target_movement_speed");
   this->send_query_(GET_TARGET_MOVEMENT_SPEED, sizeof(GET_TARGET_MOVEMENT_SPEED));
 }
 
-void MR24HPC1Component::get_existence_threshold() {
+void MR24HPC1PFComponent::get_existence_threshold() {
   ESP_LOGD(TAG, "get_existence_threshold");
   this->send_query_(GET_EXISTENCE_THRESHOLD, sizeof(GET_EXISTENCE_THRESHOLD));
 }
 
-void MR24HPC1Component::get_motion_threshold() {
+void MR24HPC1PFComponent::get_motion_threshold() {
   ESP_LOGD(TAG, "get_motion_threshold");
   this->send_query_(GET_MOTION_THRESHOLD, sizeof(GET_MOTION_THRESHOLD));
 }
 
-void MR24HPC1Component::get_motion_trigger_time() {
+void MR24HPC1PFComponent::get_motion_trigger_time() {
   ESP_LOGD(TAG, "get_motion_trigger_time");
   this->send_query_(GET_MOTION_TRIGGER_TIME, sizeof(GET_MOTION_TRIGGER_TIME));
 }
 
-void MR24HPC1Component::get_motion_to_rest_time() {
+void MR24HPC1PFComponent::get_motion_to_rest_time() {
   ESP_LOGD(TAG, "get_motion_to_rest_time");
   this->send_query_(GET_MOTION_TO_REST_TIME, sizeof(GET_MOTION_TO_REST_TIME));
 }
 
-void MR24HPC1Component::get_custom_unman_time() {
+void MR24HPC1PFComponent::get_custom_unman_time() {
   ESP_LOGD(TAG, "get_custom_unman_time");
   this->send_query_(GET_CUSTOM_UNMAN_TIME, sizeof(GET_CUSTOM_UNMAN_TIME));
 }
 
 // Logic of setting: After setting, query whether the setting is successful or not!
 
-void MR24HPC1Component::set_underlying_open_function(bool enable) {
+void MR24HPC1PFComponent::set_underlying_open_function(bool enable) {
   ESP_LOGD(TAG, "set_underlying_open_function");
   if (enable) {
     this->send_query_(UNDERLYING_SWITCH_ON, sizeof(UNDERLYING_SWITCH_ON));
@@ -686,7 +686,7 @@ void MR24HPC1Component::set_underlying_open_function(bool enable) {
   }
 }
 
-void MR24HPC1Component::set_scene_mode(uint8_t value) {
+void MR24HPC1PFComponent::set_scene_mode(uint8_t value) {
   ESP_LOGD(TAG, "set_scene_mode");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x07, 0x00, 0x01, value, 0x00, 0x54, 0x43};
@@ -704,7 +704,7 @@ void MR24HPC1Component::set_scene_mode(uint8_t value) {
   this->save_device_state_();
 }
 
-void MR24HPC1Component::set_sensitivity(uint8_t value) {
+void MR24HPC1PFComponent::set_sensitivity(uint8_t value) {
   ESP_LOGD(TAG, "set_sensitivity");
   if (value == 0x00)
     return;
@@ -717,14 +717,14 @@ void MR24HPC1Component::set_sensitivity(uint8_t value) {
   this->save_device_state_();
 }
 
-void MR24HPC1Component::set_restart() {
+void MR24HPC1PFComponent::set_restart() {
   ESP_LOGD(TAG, "set_restart");
   this->send_query_(SET_RESTART, sizeof(SET_RESTART));
   this->check_dev_inf_sign_ = true;
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_PRODUCT_MODE;
 }
 
-void MR24HPC1Component::set_unman_time(uint8_t value) {
+void MR24HPC1PFComponent::set_unman_time(uint8_t value) {
   ESP_LOGD(TAG, "set_unman_time");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x80, 0x0a, 0x00, 0x01, value, 0x00, 0x54, 0x43};
@@ -734,7 +734,7 @@ void MR24HPC1Component::set_unman_time(uint8_t value) {
   this->save_device_state_();
 }
 
-void MR24HPC1Component::set_existence_boundary(uint8_t value) {
+void MR24HPC1PFComponent::set_existence_boundary(uint8_t value) {
   ESP_LOGD(TAG, "set_existence_boundary");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x0A, 0x00, 0x01, (uint8_t) (value + 1), 0x00, 0x54, 0x43};
@@ -743,7 +743,7 @@ void MR24HPC1Component::set_existence_boundary(uint8_t value) {
   this->get_existence_boundary();
 }
 
-void MR24HPC1Component::set_motion_boundary(uint8_t value) {
+void MR24HPC1PFComponent::set_motion_boundary(uint8_t value) {
   ESP_LOGD(TAG, "set_motion_boundary");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x0B, 0x00, 0x01, (uint8_t) (value + 1), 0x00, 0x54, 0x43};
@@ -752,7 +752,7 @@ void MR24HPC1Component::set_motion_boundary(uint8_t value) {
   this->get_motion_boundary();
 }
 
-void MR24HPC1Component::set_existence_threshold(uint8_t value) {
+void MR24HPC1PFComponent::set_existence_threshold(uint8_t value) {
   ESP_LOGD(TAG, "set_existence_threshold");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x08, 0x00, 0x01, value, 0x00, 0x54, 0x43};
@@ -761,7 +761,7 @@ void MR24HPC1Component::set_existence_threshold(uint8_t value) {
   this->get_existence_threshold();
 }
 
-void MR24HPC1Component::set_motion_threshold(uint8_t value) {
+void MR24HPC1PFComponent::set_motion_threshold(uint8_t value) {
   ESP_LOGD(TAG, "set_motion_threshold");
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x08, 0x09, 0x00, 0x01, value, 0x00, 0x54, 0x43};
@@ -770,7 +770,7 @@ void MR24HPC1Component::set_motion_threshold(uint8_t value) {
   this->get_motion_threshold();
 }
 
-void MR24HPC1Component::set_motion_trigger_time(uint8_t value) {
+void MR24HPC1PFComponent::set_motion_trigger_time(uint8_t value) {
   ESP_LOGD(TAG, "set_motion_trigger_time");
   uint8_t send_data_len = 13;
   uint8_t send_data[13] = {0x53, 0x59, 0x08, 0x0C, 0x00, 0x04, 0x00, 0x00, 0x00, value, 0x00, 0x54, 0x43};
@@ -779,7 +779,7 @@ void MR24HPC1Component::set_motion_trigger_time(uint8_t value) {
   this->get_motion_trigger_time();
 }
 
-void MR24HPC1Component::set_motion_to_rest_time(uint16_t value) {
+void MR24HPC1PFComponent::set_motion_to_rest_time(uint16_t value) {
   ESP_LOGD(TAG, "set_motion_to_rest_time");
   uint8_t h8_num = (value >> 8) & 0xff;
   uint8_t l8_num = value & 0xff;
@@ -790,7 +790,7 @@ void MR24HPC1Component::set_motion_to_rest_time(uint16_t value) {
   this->get_motion_to_rest_time();
 }
 
-void MR24HPC1Component::set_custom_unman_time(uint16_t value) {
+void MR24HPC1PFComponent::set_custom_unman_time(uint16_t value) {
   ESP_LOGD(TAG, "set_custom_unman_time");
   uint32_t value_ms = value * 1000;
   uint8_t h24_num = (value_ms >> 24) & 0xff;
@@ -804,11 +804,11 @@ void MR24HPC1Component::set_custom_unman_time(uint16_t value) {
   this->get_custom_unman_time();
 }
 
-void MR24HPC1Component::set_custom_end_mode() {
+void MR24HPC1PFComponent::set_custom_end_mode() {
   uint8_t send_data_len = 10;
   uint8_t send_data[10] = {0x53, 0x59, 0x05, 0x0a, 0x00, 0x01, 0x0F, 0xCB, 0x54, 0x43};
   this->send_query_(send_data, send_data_len);
 }
 
-}  // namespace seeed_mr24hpc1
+}  // namespace seeed_mr24hpc1pf
 }  // namespace esphome

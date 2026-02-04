@@ -1,12 +1,12 @@
 #pragma once
 
 #include "esphome/components/number/number.h"
-#include "../seeed_mr24hpc1.h"
+#include "../seeed_mr24hpc1pf.h"
 
 namespace esphome {
-namespace seeed_mr24hpc1 {
+namespace seeed_mr24hpc1pf {
 
-class SensitivityNumber : public number::Number, public Parented<MR24HPC1Component> {
+class SensitivityNumber : public number::Number, public Parented<MR24HPC1PFComponent> {
  public:
   SensitivityNumber() = default;
 
@@ -14,5 +14,5 @@ class SensitivityNumber : public number::Number, public Parented<MR24HPC1Compone
   void control(float value) override;
 };
 
-}  // namespace seeed_mr24hpc1
+}  // namespace seeed_mr24hpc1pf
 }  // namespace esphome

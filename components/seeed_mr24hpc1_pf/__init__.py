@@ -9,20 +9,19 @@ CODEOWNERS = ["@pinkfish"]
 # The current component or platform can be configured or defined multiple times in the same configuration file.
 MULTI_CONF = True
 
-# This line of code creates a new namespace called mr24hpc1_ns.
-# This namespace will be used as a prefix for all classes, functions and variables associated with the mr24hpc1_ns component, ensuring that they do not conflict with the names of other components.
-mr24hpc1_ns = cg.esphome_ns.namespace("seeed_mr24hpc1_pf")
-# This MR24HPC1Component class will be a periodically polled UART device
-MR24HPC1Component = mr24hpc1_ns.class_(
-    "MR24HPC1Component", cg.Component, uart.UARTDevice
+# This line of code creates a new namespace called mr24hpc1p_ns.
+# This namespace will be used as a prefix for all classes, functions and variables associated with the mr24hpc1p_ns component, ensuring that they do not conflict with the names of other components.
+mr24hpc1pf_ns = cg.esphome_ns.namespace("seeed_mr24hpc1_pf")
+# This MR24HPC1PFComponent class will be a periodically polled UART device
+MR24HPC1PFComponent = mr24hpc1pf_ns.class_(
+    "MR24HPC1PFComponent", cg.Component, uart.UARTDevice
 )
 
-CONF_MR24HPC1_ID = "mr24hpc1_pf_id"
-
+CONF_MR24HPC1PF_ID = "mr24hpc1_pf_id"
 CONFIG_SCHEMA = (
     cv.Schema(
         {
-            cv.GenerateID(): cv.declare_id(MR24HPC1Component),
+            cv.GenerateID(): cv.declare_id(MR24HPC1PFComponent),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)

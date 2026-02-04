@@ -27,12 +27,12 @@
 #include "esphome/core/helpers.h"
 #include "esphome/core/preferences.h"
 
-#include "seeed_mr24hpc1_constants.h"
+#include "seeed_mr24hpc1pf_constants.h"
 
 #include <map>
 
 namespace esphome {
-namespace seeed_mr24hpc1 {
+namespace seeed_mr24hpc1pf {
 
 enum FrameState {
   FRAME_IDLE,
@@ -219,5 +219,5 @@ struct MMWaveDeviceRestoreState {
   uint8_t presence_timeout; 
 } __attribute__((packed));
 
-}  // namespace seeed_mr24hpc1
+}  // namespace seeed_mr24hpc1pf
 }  // namespace esphome

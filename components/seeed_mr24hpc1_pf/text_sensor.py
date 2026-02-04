@@ -2,7 +2,7 @@ import esphome.codegen as cg
 from esphome.components import text_sensor
 import esphome.config_validation as cv
 from esphome.const import ENTITY_CATEGORY_DIAGNOSTIC
-from . import CONF_MR24HPC1_ID, MR24HPC1Component
+from . import CONF_MR24HPC1PF_ID, MR24HPC1PFComponent
 
 CONF_HEART_BEAT = "heart_beat"
 CONF_PRODUCT_MODEL = "product_model"
@@ -16,7 +16,7 @@ CONF_MOTION_STATUS = "motion_status"
 
 # The entity category for read only diagnostic values, for example RSSI, uptime or MAC Address
 CONFIG_SCHEMA = {
-    cv.GenerateID(CONF_MR24HPC1_ID): cv.use_id(MR24HPC1Component),
+    cv.GenerateID(CONF_MR24HPC1PF_ID): cv.use_id(MR24HPC1PFComponent),
     cv.Optional(CONF_HEART_BEAT): text_sensor.text_sensor_schema(
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC, icon="mdi:connection"
     ),
@@ -42,7 +42,7 @@ CONFIG_SCHEMA = {
 
 
 async def to_code(config):
-    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1_ID])
+    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1PF_ID])
     if heartbeat_config := config.get(CONF_HEART_BEAT):
         sens = await text_sensor.new_text_sensor(heartbeat_config)
         cg.add(mr24hpc1_component.set_heartbeat_state_text_sensor(sens))

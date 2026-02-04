@@ -6,7 +6,7 @@ from esphome.const import (
     DEVICE_CLASS_ENERGY,
     UNIT_METER,
 )
-from . import CONF_MR24HPC1_ID, MR24HPC1Component
+from . import CONF_MR24HPC1PF_ID, MR24HPC1PFComponent
 
 CONF_MOVEMENT_SIGNS = "movement_signs"
 CONF_EXISTENCE_ENERGY = "existence_energy"
@@ -17,7 +17,7 @@ CONF_MOTION_DISTANCE = "motion_distance"
 
 CONFIG_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(CONF_MR24HPC1_ID): cv.use_id(MR24HPC1Component),
+        cv.GenerateID(CONF_MR24HPC1PF_ID): cv.use_id(MR24HPC1PFComponent),
         cv.Optional(CONF_MOVEMENT_SIGNS): sensor.sensor_schema(
             icon="mdi:human-greeting-variant",
         ),
@@ -45,7 +45,7 @@ CONFIG_SCHEMA = cv.Schema(
 
 
 async def to_code(config):
-    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1_ID])
+    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1PF_ID])
     if movementsigns_config := config.get(CONF_MOVEMENT_SIGNS):
         sens = await sensor.new_sensor(movementsigns_config)
         cg.add(mr24hpc1_component.set_movement_signs_sensor(sens))

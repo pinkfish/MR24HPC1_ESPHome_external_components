@@ -1,12 +1,12 @@
 #pragma once
 
 #include "esphome/components/select/select.h"
-#include "../seeed_mr24hpc1.h"
+#include "../seeed_mr24hpc1pf.h"
 
 namespace esphome {
-namespace seeed_mr24hpc1 {
+namespace seeed_mr24hpc1pf {
 
-class MotionTimeoutSelect : public select::Select, public Parented<MR24HPC1Component> {
+class MotionTimeoutSelect : public select::Select, public Parented<MR24HPC1PFComponent> {
  public:
   MotionTimeoutSelect() = default;
 
@@ -14,5 +14,5 @@ class MotionTimeoutSelect : public select::Select, public Parented<MR24HPC1Compo
   void control(const std::string &value) override;
 };
 
-}  // namespace seeed_mr24hpc1
+}  // namespace seeed_mr24hpc1pf
 }  // namespace esphome

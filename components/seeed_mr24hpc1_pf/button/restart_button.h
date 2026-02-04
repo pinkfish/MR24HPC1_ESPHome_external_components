@@ -1,12 +1,12 @@
 #pragma once
 
 #include "esphome/components/button/button.h"
-#include "../seeed_mr24hpc1.h"
+#include "../seeed_mr24hpc1pf.h"
 
 namespace esphome {
-namespace seeed_mr24hpc1 {
+namespace seeed_mr24hpc1pf {
 
-class RestartButton : public button::Button, public Parented<MR24HPC1Component> {
+class RestartButton : public button::Button, public Parented<MR24HPC1PFComponent> {
  public:
   RestartButton() = default;
 
@@ -14,5 +14,5 @@ class RestartButton : public button::Button, public Parented<MR24HPC1Component> 
   void press_action() override;
 };
 
-}  // namespace seeed_mr24hpc1
+}  // namespace seeed_mr24hpc1pf
 }  // namespace esphome

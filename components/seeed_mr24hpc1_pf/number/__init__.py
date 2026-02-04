@@ -5,13 +5,13 @@ from esphome.const import (
     CONF_SENSITIVITY,
     ENTITY_CATEGORY_CONFIG,
 )
-from .. import CONF_MR24HPC1_ID, MR24HPC1Component, mr24hpc1_ns
+from .. import CONF_MR24HPC1PF_ID, MR24HPC1PFComponent, mr24hpc1pf_ns
 
-SensitivityNumber = mr24hpc1_ns.class_("SensitivityNumber", number.Number)
-ExistenceThresholdNumber = mr24hpc1_ns.class_("ExistenceThresholdNumber", number.Number)
-MotionThresholdNumber = mr24hpc1_ns.class_("MotionThresholdNumber", number.Number)
-MotionTriggerTimeNumber = mr24hpc1_ns.class_("MotionTriggerTimeNumber", number.Number)
-MotionToRestTimeNumber = mr24hpc1_ns.class_("MotionToRestTimeNumber", number.Number)
+SensitivityNumber = mr24hpc1pf_ns.class_("SensitivityNumber", number.Number)
+ExistenceThresholdNumber = mr24hpc1pf_ns.class_("ExistenceThresholdNumber", number.Number)
+MotionThresholdNumber = mr24hpc1pf_ns.class_("MotionThresholdNumber", number.Number)
+MotionTriggerTimeNumber = mr24hpc1pf_ns.class_("MotionTriggerTimeNumber", number.Number)
+MotionToRestTimeNumber = mr24hpc1pf_ns.class_("MotionToRestTimeNumber", number.Number)
 
 
 CONF_EXISTENCE_THRESHOLD = "existence_threshold"
@@ -21,7 +21,7 @@ CONF_MOTION_TO_REST = "motion_to_rest"
 
 CONFIG_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(CONF_MR24HPC1_ID): cv.use_id(MR24HPC1Component),
+        cv.GenerateID(CONF_MR24HPC1PF_ID): cv.use_id(MR24HPC1PFComponent),
         cv.Optional(CONF_SENSITIVITY): number.number_schema(
             SensitivityNumber,
             entity_category=ENTITY_CATEGORY_CONFIG,
@@ -52,7 +52,7 @@ CONFIG_SCHEMA = cv.Schema(
 
 
 async def to_code(config):
-    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1_ID])
+    mr24hpc1_component = await cg.get_variable(config[CONF_MR24HPC1PF_ID])
     if sensitivity_config := config.get(CONF_SENSITIVITY):
         n = await number.new_number(
             sensitivity_config,
