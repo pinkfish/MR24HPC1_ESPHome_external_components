@@ -216,7 +216,7 @@ class MR24HPC1PFComponent : public Component,
 struct MMWaveDeviceRestoreState {
   uint8_t scene_mode;
   uint8_t sensitivity;
-  uint8_t presence_timeout; 
+  uint8_t motion_timeout; 
 } __attribute__((packed));
 
 }  // namespace seeed_mr24hpc1_pf

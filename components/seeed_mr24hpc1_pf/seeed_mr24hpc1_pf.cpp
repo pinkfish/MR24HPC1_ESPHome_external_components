@@ -90,18 +90,18 @@ void MR24HPC1PFComponent::periodic_poll_() {
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
 
-
 // Save the state out to flash
 void MR24HPC1PFComponent::save_device_state_() {
   if (this->sg_start_query_data_ >= STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS) {
     ESP_LOGD(TAG, "Saving MMWave device state to preferences");
-  
+
     MMWaveDeviceRestoreState state = {};
     // initialize as zero to prevent random data on stack triggering erase
     memset(&state, 0, sizeof(MMWaveDeviceRestoreState));
-    state.scene_mode = this->scene_mode_select_ != nullptr ? this->scene_mode_select_->get_index() : 0;
-    state.sensitivity = this->sensitivity_number_ != nullptr ? this->sensitivity_number_->get_value() : 0;
-    state.motion_timeout = this->motion_timeout_select_ != nullptr ? this->motion_timeout_select_->get_index() : 0;
+    state.scene_mode = this->scene_mode_select_ != nullptr ? this->scene_mode_select_->active_index().or_else(0) : 0;
+    state.sensitivity = this->sensitivity_number_ != nullptr ? this->sensitivity_number_->state;
+    state.motion_timeout =
+        this->motion_timeout_select_ != nullptr ? this->motion_timeout_select_->active_index().or_else(0) : 0;
 
     this->rtc_.save(&state);
   }
