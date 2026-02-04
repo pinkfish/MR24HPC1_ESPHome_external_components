@@ -62,7 +62,7 @@ uart:
   stop_bits: 1
 
 seeed_mr24hpc1_pf:
-  id: my_seeed_mr24hpc1
+  id: my_seeed_mr24hpc1_pf
 
 text_sensor:
   - platform: seeed_mr24hpc1_pf
