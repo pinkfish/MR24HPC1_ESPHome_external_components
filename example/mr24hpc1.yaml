@@ -61,7 +61,7 @@ uart:
   parity: NONE
   stop_bits: 1
 
-seeed_mr24hpc1:
+seeed_mr24hpc1_pf:
   id: my_seeed_mr24hpc1
 
 text_sensor:
