@@ -66,7 +66,7 @@ void MR24HPC1PFComponent::setup() {
   this->sg_recv_data_state_ = FRAME_IDLE;
   this->s_output_info_switch_flag_ = OUTPUT_SWITCH_INIT;
 
-  this->rtc_ = global_preferences->make_entity_preference<MMWaveDeviceRestoreState>(RESTORE_STATE_VERSION);
+  this->rtc_ = global_preferences->make_preference<MMWaveDeviceRestoreState>(RESTORE_STATE_VERSION);
 
   memset(this->c_product_mode_, 0, PRODUCT_BUF_MAX_SIZE);
   memset(this->c_product_id_, 0, PRODUCT_BUF_MAX_SIZE);
