@@ -27,7 +27,7 @@
 #include "esphome/core/helpers.h"
 #include "esphome/core/preferences.h"
 
-#include "seeed_mr24hpc1pf_constants.h"
+#include "seeed_mr24hpc1_pf_constants.h"
 
 #include <map>
 
