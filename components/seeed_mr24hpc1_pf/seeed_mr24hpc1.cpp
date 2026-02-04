@@ -7,7 +7,7 @@
 namespace esphome {
 namespace seeed_mr24hpc1 {
 
-static const char *const TAG = "seeed_mr24hpc1";
+static const char *const TAG = "seeed_mr24hpc1_pf";
 
 // Prints the component's configuration data. dump_config() prints all of the component's configuration
 // items in an easy-to-read format, including the configuration key-value pairs.

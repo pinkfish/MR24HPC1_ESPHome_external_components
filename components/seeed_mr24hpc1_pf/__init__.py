@@ -29,10 +29,10 @@ CONFIG_SCHEMA = (
     .extend(cv.COMPONENT_SCHEMA)
 )
 
-# A verification mode was created to verify the configuration parameters of a UART device named "seeed_mr24hpc1".
+# A verification mode was created to verify the configuration parameters of a UART device named "seeed_mr24hpc1_pf".
 # This authentication mode requires that the device must have transmit and receive functionality, a parity mode of "NONE", and a stop bit of one.
 FINAL_VALIDATE_SCHEMA = uart.final_validate_device_schema(
-    "seeed_mr24hpc1",
+    "seeed_mr24hpc1_pf",
     require_tx=True,
     require_rx=True,
     parity="NONE",
