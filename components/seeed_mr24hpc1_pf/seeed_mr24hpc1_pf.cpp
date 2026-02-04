@@ -1,11 +1,11 @@
-#include "seeed_mr24hpc1pf.h"
+#include "seeed_mr24hpc1_pf.h"
 
 #include "esphome/core/log.h"
 
 #include <utility>
 
 namespace esphome {
-namespace seeed_mr24hpc1pf {
+namespace seeed_mr24hpc1_pf {
 
 static const char *const TAG = "seeed_mr24hpc1_pf";
 
@@ -810,5 +810,5 @@ void MR24HPC1PFComponent::set_custom_end_mode() {
   this->send_query_(send_data, send_data_len);
 }
 
-}  // namespace seeed_mr24hpc1pf
+}  // namespace seeed_mr24hpc1_pf
 }  // namespace esphome

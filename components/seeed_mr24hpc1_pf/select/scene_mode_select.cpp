@@ -1,7 +1,7 @@
 #include "scene_mode_select.h"
 
 namespace esphome {
-namespace seeed_mr24hpc1pf {
+namespace seeed_mr24hpc1_pf {
 
 void SceneModeSelect::control(const std::string &value) {
   this->publish_state(value);
@@ -11,5 +11,5 @@ void SceneModeSelect::control(const std::string &value) {
   }
 }
 
-}  // namespace seeed_mr24hpc1pf
+}  // namespace seeed_mr24hpc1_pf
 }  // namespace esphome

@@ -11,7 +11,7 @@ MULTI_CONF = True
 
 # This line of code creates a new namespace called mr24hpc1p_ns.
 # This namespace will be used as a prefix for all classes, functions and variables associated with the mr24hpc1p_ns component, ensuring that they do not conflict with the names of other components.
-mr24hpc1pf_ns = cg.esphome_ns.namespace("seeed_mr24hpc1pf")
+mr24hpc1pf_ns = cg.esphome_ns.namespace("seeed_mr24hpc1_pf")
 # This MR24HPC1PFComponent class will be a periodically polled UART device
 MR24HPC1PFComponent = mr24hpc1pf_ns.class_(
     "MR24HPC1PFComponent", cg.Component, uart.UARTDevice

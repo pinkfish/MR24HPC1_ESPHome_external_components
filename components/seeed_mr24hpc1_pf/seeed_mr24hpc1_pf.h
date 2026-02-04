@@ -32,7 +32,7 @@
 #include <map>
 
 namespace esphome {
-namespace seeed_mr24hpc1pf {
+namespace seeed_mr24hpc1_pf {
 
 enum FrameState {
   FRAME_IDLE,
@@ -89,7 +89,7 @@ static const char *const S_BOUNDARY_STR[10] = {"0.5m", "1.0m", "1.5m", "2.0m", "
 static const float S_BOUNDARY_MTR[11] = {0.0, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f};  // float: m
 static const float S_PRESENCE_OF_DETECTION_RANGE_STR[7] = {0.0f, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f};  // uint: m
 
-class MR24HPC1Component : public Component,
+class MR24HPC1PFComponent : public Component,
                           public uart::UARTDevice {  // The class name must be the name defined by text_sensor.py
 #ifdef USE_TEXT_SENSOR
   SUB_TEXT_SENSOR(heartbeat_state)
@@ -219,5 +219,5 @@ struct MMWaveDeviceRestoreState {
   uint8_t presence_timeout; 
 } __attribute__((packed));
 
-}  // namespace seeed_mr24hpc1pf
+}  // namespace seeed_mr24hpc1_pf
 }  // namespace esphome

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "esphome/components/switch/switch.h"
-#include "../seeed_mr24hpc1pf.h"
+#include "../seeed_mr24hpc1_pf.h"
 
 namespace esphome {
-namespace seeed_mr24hpc1pf {
+namespace seeed_mr24hpc1_pf {
 
 class UnderlyOpenFunctionSwitch : public switch_::Switch, public Parented<MR24HPC1PFComponent> {
  public:
@@ -14,5 +14,5 @@ class UnderlyOpenFunctionSwitch : public switch_::Switch, public Parented<MR24HP
   void write_state(bool state) override;
 };
 
-}  // namespace seeed_mr24hpc1pf
+}  // namespace seeed_mr24hpc1_pf
 }  // namespace esphome
