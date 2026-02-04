@@ -49,6 +49,9 @@ void MR24HPC1PFComponent::dump_config() {
 #endif
 }
 
+// Random 32bit value; If this changes existing restore preferences are invalidated
+static const uint32_t RESTORE_STATE_VERSION = 0x848FA6ADUL;
+
 // Initialisation functions
 void MR24HPC1PFComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MR24HPC1...");
@@ -63,7 +66,7 @@ void MR24HPC1PFComponent::setup() {
   this->sg_recv_data_state_ = FRAME_IDLE;
   this->s_output_info_switch_flag_ = OUTPUT_SWITCH_INIT;
 
-  this->rtc_ = this->make_entity_preference<MMWaveDeviceRestoreState>(RESTORE_STATE_VERSION);
+  this->rtc_ = global_preferences->make_entity_preference<MMWaveDeviceRestoreState>(RESTORE_STATE_VERSION);
 
   memset(this->c_product_mode_, 0, PRODUCT_BUF_MAX_SIZE);
   memset(this->c_product_id_, 0, PRODUCT_BUF_MAX_SIZE);
@@ -87,13 +90,12 @@ void MR24HPC1PFComponent::periodic_poll_() {
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
 }
 
-// Random 32bit value; If this changes existing restore preferences are invalidated
-static const uint32_t RESTORE_STATE_VERSION = 0x848EA6ADUL;
 
 // Save the state out to flash
 void MR24HPC1PFComponent::save_device_state_() {
   if (this->sg_start_query_data_ >= STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS) {
     ESP_LOGD(TAG, "Saving MMWave device state to preferences");
+  
     MMWaveDeviceRestoreState state = {};
     // initialize as zero to prevent random data on stack triggering erase
     memset(&state, 0, sizeof(MMWaveDeviceRestoreState));
