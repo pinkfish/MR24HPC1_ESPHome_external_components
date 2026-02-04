@@ -63,6 +63,8 @@ void MR24HPC1Component::setup() {
   this->sg_recv_data_state_ = FRAME_IDLE;
   this->s_output_info_switch_flag_ = OUTPUT_SWITCH_INIT;
 
+  this->rtc_ = this->make_entity_preference<MMWaveDeviceRestoreState>(RESTORE_STATE_VERSION);
+
   memset(this->c_product_mode_, 0, PRODUCT_BUF_MAX_SIZE);
   memset(this->c_product_id_, 0, PRODUCT_BUF_MAX_SIZE);
   memset(this->c_firmware_version_, 0, PRODUCT_BUF_MAX_SIZE);
@@ -83,6 +85,38 @@ void MR24HPC1Component::setup() {
 void MR24HPC1Component::periodic_poll_() {
   this->get_radar_output_information_switch();  // Query the key status every so often
   this->sg_start_query_data_ = STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS;
+}
+
+// Random 32bit value; If this changes existing restore preferences are invalidated
+static const uint32_t RESTORE_STATE_VERSION = 0x848EA6ADUL;
+
+// Save the state out to flash
+void MR24HPC1Component::save_device_state_() {
+  if (this->sg_start_query_data_ >= STANDARD_FUNCTION_QUERY_KEEPAWAY_STATUS) {
+    ESP_LOGD(TAG, "Saving MMWave device state to preferences");
+    MMWaveDeviceRestoreState state = {};
+    // initialize as zero to prevent random data on stack triggering erase
+    memset(&state, 0, sizeof(MMWaveDeviceRestoreState));
+    state.version = RESTORE_STATE_VERSION;
+    state.scene_mode = this->scene_mode_select_ != nullptr ? this->scene_mode_select_->get_index() : 0;
+    state.sensitivity = this->sensitivity_number_ != nullptr ? this->sensitivity_number_->get_value() : 0;
+    state.motion_timeout = this->motion_timeout_select_ != nullptr ? this->motion_timeout_select_->get_index() : 0;
+
+    this->rtc_.save(&state);
+  }
+}
+
+void MR24HPC1Component::restore_device_state_() {
+  MMWaveDeviceRestoreState state;
+  if (this->rtc_.load(&state)) {
+    ESP_LOGD(TAG, "Restored MMWave device state from preferences");
+    // Update the stats.
+    set_scene_mode(state.scene_mode);
+    set_sensitivity(state.sensitivity);
+    set_motion_timeout(state.motion_timeout);
+  } else {
+    ESP_LOGD(TAG, "No MMWave device state in preferences");
+  }
 }
 
 // main loop
@@ -122,6 +156,9 @@ void MR24HPC1Component::loop() {
         break;
       case STANDARD_FUNCTION_ENABLE_OPEN_MODE:
         this->set_underlying_open_function(true);
+        break;
+      case STANDARD_FUNCTION_RESTORE_STATE:
+        this->restore_device_state_();
         break;
       case STANDARD_FUNCTION_QUERY_SCENE_MODE:
         this->get_scene_mode();
@@ -664,6 +701,7 @@ void MR24HPC1Component::set_scene_mode(uint8_t value) {
   this->get_motion_trigger_time();
   this->get_motion_to_rest_time();
   this->get_custom_unman_time();
+  this->save_device_state_();
 }
 
 void MR24HPC1Component::set_sensitivity(uint8_t value) {
@@ -676,6 +714,7 @@ void MR24HPC1Component::set_sensitivity(uint8_t value) {
   this->send_query_(send_data, send_data_len);
   this->get_scene_mode();
   this->get_sensitivity();
+  this->save_device_state_();
 }
 
 void MR24HPC1Component::set_restart() {
@@ -692,6 +731,7 @@ void MR24HPC1Component::set_unman_time(uint8_t value) {
   send_data[7] = get_frame_crc_sum(send_data, send_data_len);
   this->send_query_(send_data, send_data_len);
   this->get_unmanned_time();
+  this->save_device_state_();
 }
 
 void MR24HPC1Component::set_existence_boundary(uint8_t value) {

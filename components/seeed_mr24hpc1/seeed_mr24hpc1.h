@@ -25,6 +25,7 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/automation.h"
 #include "esphome/core/helpers.h"
+#include "esphome/core/preferences.h"
 
 #include "seeed_mr24hpc1_constants.h"
 
@@ -53,6 +54,7 @@ enum PollingState {
   STANDARD_FUNCTION_QUERY_FIRMWARE_VERSION,
   STANDARD_FUNCTION_QUERY_HARDWARE_MODE,  // Above is the equipment information
   STANDARD_FUNCTION_ENABLE_OPEN_MODE,
+  STANDARD_FUNCTION_RESTORE_STATE,
   STANDARD_FUNCTION_QUERY_SCENE_MODE,
   STANDARD_FUNCTION_QUERY_SENSITIVITY,
   STANDARD_FUNCTION_QUERY_UNMANNED_TIME,
@@ -146,6 +148,9 @@ class MR24HPC1Component : public Component,
   uint32_t last_recv_time_;
   uint32_t last_send_time_;
 
+  // Used to save/restore device state
+  ESPPreferenceObject rtc_;
+
   void periodic_poll_();
   void r24_split_data_frame_(uint8_t value);
   void r24_parse_data_frame_(uint8_t *data, uint8_t len);
@@ -154,6 +159,9 @@ class MR24HPC1Component : public Component,
   void r24_frame_parse_product_information_(uint8_t *data);
   void r24_frame_parse_human_information_(uint8_t *data);
   void send_query_(const uint8_t *query, size_t string_length);
+
+  void save_device_state_();
+  void restore_device_state_();
 
  public:
   float get_setup_priority() const override { return esphome::setup_priority::LATE; }
@@ -201,6 +209,15 @@ class MR24HPC1Component : public Component,
   void set_motion_to_rest_time(uint16_t value);
   void set_custom_unman_time(uint16_t value);
 };
+
+
+/// Struct used to save the state of the climate device in restore memory.
+/// Make sure to update RESTORE_STATE_VERSION when changing the struct entries.
+struct MMWaveDeviceRestoreState {
+  uint8_t scene_mode;
+  uint8_t sensitivity;
+  uint8_t presence_timeout; 
+} __attribute__((packed));
 
 }  // namespace seeed_mr24hpc1
 }  // namespace esphome

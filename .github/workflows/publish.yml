@@ -15,10 +15,10 @@ on:
 jobs:
   build-firmware:
     name: Build Firmware
-    uses: esphome/workflows/.github/workflows/build.yml@main
+    uses: ./esphome_build.yaml
     with:
       files: example/mr24hpc1.yaml
-      esphome-version: 2024.7.3
+      esphome-version: 2026.1.3
       combined-name: firmware
       release-summary: ${{ github.event_name == 'release' && github.event.release.body || '' }}
       release-url: ${{ github.event_name == 'release' && github.event.release.html_url || '' }}
