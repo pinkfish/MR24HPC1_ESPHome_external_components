@@ -65,7 +65,7 @@ seeed_mr24hpc1_pf:
   id: my_seeed_mr24hpc1
 
 text_sensor:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     heart_beat:
       name: "Heartbeat"
     product_model:
@@ -82,13 +82,13 @@ text_sensor:
       name: "Motion Information"
 
 binary_sensor:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     has_target:
       name: "Presence Information"
       device_class: occupancy
 
 sensor:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     movement_signs:
       name: "Body Movement Parameter"
     existence_energy:
@@ -103,18 +103,18 @@ sensor:
       name: "Static Distance"
 
 button:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     restart:
       name: "Module Restart"
 
 select:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     scene_mode:
       name: "Scene"
     motion_timeout:
       name: "Presence timeout"
 
 number:
-  - platform: seeed_mr24hpc1
+  - platform: seeed_mr24hpc1_pf
     sensitivity:
       name: "Sensitivity"
