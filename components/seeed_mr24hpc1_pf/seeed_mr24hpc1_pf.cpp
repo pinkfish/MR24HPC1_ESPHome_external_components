@@ -99,7 +99,6 @@ void MR24HPC1PFComponent::save_device_state_() {
     MMWaveDeviceRestoreState state = {};
     // initialize as zero to prevent random data on stack triggering erase
     memset(&state, 0, sizeof(MMWaveDeviceRestoreState));
-    state.version = RESTORE_STATE_VERSION;
     state.scene_mode = this->scene_mode_select_ != nullptr ? this->scene_mode_select_->get_index() : 0;
     state.sensitivity = this->sensitivity_number_ != nullptr ? this->sensitivity_number_->get_value() : 0;
     state.motion_timeout = this->motion_timeout_select_ != nullptr ? this->motion_timeout_select_->get_index() : 0;
